@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Web Socket 服务搭建 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Web Socket 服务搭建</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 4, 2020&nbsp;&nbsp;9:24:26</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<p>Web Socket 基础知识</p>
+<p>3213</p>
+<p>32131</p>
+<p>321312</p>
+<p>32131</p>
+</blockquote>
+<h2 id="1-架构分析"><a href="#1-架构分析" class="headerlink" title="1.架构分析"></a>1.架构分析</h2><p>看过我之前的文章知道，Web Socket 是一个双向通行的协议。可以用来做聊天室，弹幕推送等。如果我们现在自己要做一个弹幕推送服务，采用 Web Socket 那么该怎么办呢 ？</p>
+<p>我之前的文章有几篇文章，写的是如何爬取某直播平台房间信息。从中我们可以发现几点：</p>
+<ol>
+<li>推送房间信息的 Web Socket 地址是随机下发的，这样做的目的是为了负载均衡应对高并发。</li>
+<li>连接 Web Socket 后第一件事，就是发送登录信息。这登录信息，可以通过 Web Socket URL 上面携带参数进行认证，也可以通过发送消息给 Web Socket 服务，进行认证。这认证数据可能是固定写死的（例如：心跳服务），也可能是之前通过 HTTP 请求获取的认证数据（通过携带 Cookies 或者 Authentication 也或者什么也不携带 ）的请求获取 TOKEN 【携带身份信息请求返回的 TOKEN，后台缓存了相应的用户数据】。</li>
+<li>每隔一段时间发送一次心跳数据包。这样做的目的是为了保活，服务器踢掉那些超时没有发送心跳数据包的客户端。</li>
+<li>本地提交数据一般都是通过 HTTP 请求，不是通过 Web Socket 进行发送数据。Web Socket 只作为服务器推送信息的通道，一般不发送用户操作的信息。这样的目的是因为用户操作发送的 HTTP 是立马放回数据，来告诉你此处的操作结果是成稿还是失败（推荐采用 HTTP 服务来记录用户的操作）。</li>
+<li>发送认证消息，心跳消息或者服务器推送过来的消息。建议通过字节进行传输，此时就产生一个问题，如何设计传输文本格式。通过之前的文章爬取某直播平台的弹幕，从中学到设计传输的格式为<ol>
+<li>头部 4 字节的大端（小端）模式表示全部的长度。</li>
+<li>头部 2 字节的头部长度， 例如 [ 0, 16 ]。</li>
+<li>头部 2 字节的消息协议，0 表示未加密 1 表示加密等，例如  [ 0, 1 ]。</li>
+<li>头部 4 字节的大端（小端）模式表示消息的类型。</li>
+<li>头部 4 字节的备用字段（可以用来对文本进行加密方法的标记）。</li>
+<li>消息内容为若干字节的文本，文本可以采用类似斗鱼的文本协议，也可以用 JSON 格式进行传输（JSON 相对斗鱼的文本协议占用的字节数更多），当然还是自己创建一种文本的传输协议。</li>
+</ol>
+</li>
+<li>Web Socket 集群需要只需要将 Kafka 集群推送的数据下发至对应的 Web Socket 的客户端就行了。</li>
+</ol>
+<h2 id="2-代码编写"><a href="#2-代码编写" class="headerlink" title="2. 代码编写"></a>2. 代码编写</h2><h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Web Socket 服务端 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-websocket<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.6.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="搭建服务"><a href="#搭建服务" class="headerlink" title="搭建服务"></a>搭建服务</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口 WebSocketHandler 实现</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSocketService</span> <span class="keyword">implements</span> <span class="title">WebSocketHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterConnectionEstablished</span><span class="params">(WebSocketSession webSocketSession)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(WebSocketSession webSocketSession, WebSocketMessage&lt;?&gt; webSocketMessage)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleTransportError</span><span class="params">(WebSocketSession webSocketSession, Throwable throwable)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterConnectionClosed</span><span class="params">(WebSocketSession webSocketSession, CloseStatus closeStatus)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsPartialMessages</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 配置 WebSocketConfig </span></span><br><span class="line"><span class="comment">  * 将参数保存起来</span></span><br><span class="line"><span class="comment">  * 注册了 Web Socket 的连接地址</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSocket</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSocketConfig</span> <span class="keyword">implements</span> <span class="title">WebSocketConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerWebSocketHandlers</span><span class="params">(WebSocketHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 支持 websocket 的访问链接</span></span><br><span class="line">        registry.addHandler(<span class="keyword">new</span> WebSocketService(), <span class="string">"/ws"</span>)</span><br><span class="line">            	<span class="comment">// 添加一个拦截器把 GET 请求参数写入进来</span></span><br><span class="line">                .addInterceptors(<span class="keyword">new</span> HandshakeInterceptor() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">beforeHandshake</span><span class="params">(ServerHttpRequest serverHttpRequest,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                   ServerHttpResponse serverHttpResponse,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                   WebSocketHandler webSocketHandler,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                   Map&lt;String, Object&gt; map)</span> </span>&#123;</span><br><span class="line">                        ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) serverHttpRequest;</span><br><span class="line">                        HttpServletRequest request = servletRequest.getServletRequest();</span><br><span class="line">                        <span class="comment">// 读取 URL 里面携带的参数保存在 map 文件里面</span></span><br><span class="line">                        Enumeration&lt;String&gt; enumeration = request.getParameterNames();</span><br><span class="line">                        <span class="keyword">while</span> (enumeration.hasMoreElements()) &#123;</span><br><span class="line">                            String name = enumeration.nextElement();</span><br><span class="line">                            map.put(name, request.getParameter(name));</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterHandshake</span><span class="params">(ServerHttpRequest serverHttpRequest,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               ServerHttpResponse serverHttpResponse,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               WebSocketHandler webSocketHandler, Exception e)</span> </span>&#123;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .setAllowedOrigins(<span class="string">"*"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"><span class="keyword">import</span> java.util.zip.Deflater;</span><br><span class="line"><span class="keyword">import</span> java.util.zip.Inflater;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ToolUtil</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成 UUID</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">generateUUID</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> UUID.randomUUID().toString().replaceAll(<span class="string">"-"</span>, <span class="string">""</span>).toUpperCase();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以大端模式将 int 转成 byte[]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] intToBytesBig(<span class="keyword">int</span> value) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">byte</span> [] &#123;</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) (value &amp; <span class="number">0xFF</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以小端模式将 int 转成 byte[]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] intToBytesLittle(<span class="keyword">int</span> value) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">byte</span> [] &#123;</span><br><span class="line">                (<span class="keyword">byte</span>) (value &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xFF</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以大端模式将 byte[]转成 int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bytesToIntBig</span><span class="params">(<span class="keyword">byte</span>[] src)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (((src[<span class="number">0</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">24</span>)</span><br><span class="line">                | ((src[<span class="number">1</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">16</span>)</span><br><span class="line">                | ((src[<span class="number">2</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">8</span>)</span><br><span class="line">                | (src[<span class="number">3</span>] &amp; <span class="number">0xFF</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以小端模式将 byte[] 转成 int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bytesToIntLittle</span><span class="params">(<span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ((bytes[<span class="number">0</span>] &amp; <span class="number">0xFF</span>)</span><br><span class="line">                | ((bytes[<span class="number">1</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">8</span>)</span><br><span class="line">                | ((bytes[<span class="number">2</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">16</span>)</span><br><span class="line">                | ((bytes[<span class="number">3</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">24</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * hex转byte数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] hexToByte(String hex)&#123;</span><br><span class="line">        <span class="keyword">int</span> m, n;</span><br><span class="line">        <span class="keyword">int</span> byteLen = hex.length() / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] ret = <span class="keyword">new</span> <span class="keyword">byte</span>[byteLen];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; byteLen; i++) &#123;</span><br><span class="line">            m = i * <span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">            n = m + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> intVal = Integer.decode(<span class="string">"0x"</span> + hex.substring(i * <span class="number">2</span>, m) + hex.substring(m, n));</span><br><span class="line">            ret[i] = (<span class="keyword">byte</span>) intVal;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * byte数组转hex</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">bytesToHex</span><span class="params">(<span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">byte</span> aByte : bytes) &#123;</span><br><span class="line">            String hex = Integer.toHexString(aByte &amp; <span class="number">0xFF</span>);</span><br><span class="line">            <span class="keyword">if</span> (hex.length() &lt; <span class="number">2</span>) sb.append(<span class="number">0</span>);</span><br><span class="line">            sb.append(hex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Zlib 压缩</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] compressZlib(<span class="keyword">byte</span>[] data) &#123;</span><br><span class="line">        Deflater compresser = <span class="keyword">new</span> Deflater();</span><br><span class="line">        compresser.reset();</span><br><span class="line">        compresser.setInput(data);</span><br><span class="line">        compresser.finish();</span><br><span class="line">        ByteArrayOutputStream byteArrayOutputStream = <span class="keyword">new</span> ByteArrayOutputStream(data.length);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="keyword">while</span> (!compresser.finished()) &#123;</span><br><span class="line">                <span class="keyword">int</span> i = compresser.deflate(buf);</span><br><span class="line">                byteArrayOutputStream.write(buf, <span class="number">0</span>, i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                byteArrayOutputStream.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        compresser.end();</span><br><span class="line">        <span class="keyword">return</span> byteArrayOutputStream.toByteArray();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Zlib 解压</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] decompressZlib(<span class="keyword">byte</span>[] data) &#123;</span><br><span class="line">        Inflater decompresser = <span class="keyword">new</span> Inflater();</span><br><span class="line">        decompresser.reset();</span><br><span class="line">        decompresser.setInput(data);</span><br><span class="line">        ByteArrayOutputStream byteArrayOutputStream = <span class="keyword">new</span> ByteArrayOutputStream(data.length);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="keyword">while</span> (!decompresser.finished()) &#123;</span><br><span class="line">                <span class="keyword">int</span> i = decompresser.inflate(buf);</span><br><span class="line">                byteArrayOutputStream.write(buf,<span class="number">0</span>, i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                byteArrayOutputStream.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        decompresser.end();</span><br><span class="line">        <span class="keyword">return</span> byteArrayOutputStream.toByteArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>我这里只给出了我上面提到的消息传输的数据格式转换的 JAVA 代码（ToolUtil.java），和 Spring Boot 搭建 Web Socket 服务端的代码。其余剩下的内容不做过多的描述，只提供思路。</p>
+<h2 id="3-案例分析"><a href="#3-案例分析" class="headerlink" title="3. 案例分析"></a>3. 案例分析</h2><h3 id="1-弹幕系统"><a href="#1-弹幕系统" class="headerlink" title="1. 弹幕系统"></a>1. 弹幕系统</h3><blockquote>
+<p>当我们需要做一个弹幕系统的时候，我们一般采用 Web Socket 进行发送数据。我们通过这个弹幕系统仔细分析发现，其实就是当客户端的 Web Socket 连接到服务器并确认加入的房间的时候才跟客户端推送数据。 用户的操作一般都是通过 HTTP 请求发送给服务器，然后通过 Web Socket 推送给加入这个房间的各个客户端。<strong>（类似的场景有：预约程序，多客户端【本店客户端，代理商客户端等】的数据沟通）</strong></p>
+</blockquote>
+<div style="text-align: center;">
+    <img src="/images/websocket/image-20200319163202404.png">
+</div>
+
+
+
+<h3 id="2-聊天系统"><a href="#2-聊天系统" class="headerlink" title="2. 聊天系统"></a>2. 聊天系统</h3><blockquote>
+<p>当我们需要做一个聊天系统的时候，我们一般采用 Web Socket 进行发送数据。我们可以通过 HTTP 请求实现，发送消息，和发送图片。服务器接收用户发送过来的消息，然后推送给各个客户端，服务器对应缓存每条消息事件的数据到DB（缓存7天）。客户端通过心跳机制和消息ID，保证获历史消息和离线消息。</p>
+</blockquote>
+<div style="text-align: center;">
+    <img src="/images/websocket/image-20200319202216952.png">
+</div>
+
+
+
+<h3 id="3-推送系统"><a href="#3-推送系统" class="headerlink" title="3. 推送系统"></a>3. 推送系统</h3><blockquote>
+<p>当我们需要做一个推送系统的时候，我们一般采用 Web Socket 进行发送数据。比如某个网站内部里面的订阅，推送消息，聊天等。同聊天系统，但是不会删除缓存。暂时我是这样想的。</p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/04/hello-world%20-%20%E5%89%AF%E6%9C%AC/">http://lidashuang.com/2020/04/04/hello-world%20-%20%E5%89%AF%E6%9C%AC/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/04/hello-world/">Hello World</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/123/">123</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

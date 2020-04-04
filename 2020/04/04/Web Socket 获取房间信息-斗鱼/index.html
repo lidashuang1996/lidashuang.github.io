@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Web Socket 获取房间信息-斗鱼 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Web Socket 获取房间信息-斗鱼</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 4, 2020&nbsp;&nbsp;9:24:26</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Web-Socket-获取房间信息-斗鱼"><a href="#Web-Socket-获取房间信息-斗鱼" class="headerlink" title="Web Socket 获取房间信息-斗鱼"></a>Web Socket 获取房间信息-斗鱼</h1><blockquote>
+<p><strong>斗鱼 <a href="https://www.douyu.com/" target="_blank" rel="noopener">https://www.douyu.com/</a></strong></p>
+<p>斗鱼-每个人的直播平台提供高清、快捷、流畅的视频直播平台。</p>
+<p>斗鱼-房间信息（ 弹幕信息、礼物信息、排行榜信息，房间贵族人数信息、等 ）是通过Web Socket 推送，我们可以通过 JAVA （ Web Socket Client ）来获取数据，然后制作出相应的插件，来扩展斗鱼服务。</p>
+</blockquote>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. 环境准备</h2><ul>
+<li><a href="https://www.google.cn/chrome/dev/" target="_blank" rel="noopener">谷歌浏览器开发版</a></li>
+<li>JAVA 开发环境 （采用 JAVA 开发）</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- meven Web Socket Client --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.java-websocket<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>Java-WebSocket<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-斗鱼房间协议"><a href="#2-斗鱼房间协议" class="headerlink" title="2. 斗鱼房间协议"></a>2. 斗鱼房间协议</h2><ul>
+<li><p>消息长度：4 字节小端整数，表示整条消息（包括自身）长度（字节数）。</p>
+</li>
+<li><p>消息长度出现两遍，二者相同。</p>
+</li>
+<li><p>消息类型：4 字节小端整数，表示消息类型。取值如下：</p>
+<ul>
+<li><p>689 客户端发送给弹幕服务器的文本格式数据。</p>
+</li>
+<li><p>690 弹幕服务器发送给客户端的文本格式数据。</p>
+</li>
+</ul>
+</li>
+<li><p>加密字段：暂时未用，默认为 0。保留字段：暂时未用，默认为 0。</p>
+</li>
+<li><p>数据部分：斗鱼独创序列化文本数据，结尾必须为‘\0’。详细序列化、反序列化算法见下节。（所有协议内容均为 UTF-8 编码）</p>
+</li>
+</ul>
+<blockquote>
+<p>为增强兼容性、可读性斗鱼后台通讯协议采用文本形式的明文数据。同时针对本平台数据特点，斗鱼自创序列化、反序列化算法。即 STT 序列化。下面详细介绍 STT 序列化和反序列化。STT 序列化支持键值对类型、数组类型。规定如下：</p>
+<ol>
+<li>键 key 和值 value 直接采用 ‘@=’ 分割</li>
+<li>数组采用‘/’分割</li>
+<li>如果 key 或者 value 中含有字符 ‘/‘，则使用 ‘@S’ 转义</li>
+<li>如果 key 或者 value 中含有字符 ‘@’，使用 ‘@A’ 转义举例：<ol>
+<li>多个键值对数据：key1@=value1/key2@=value2/key3@=value3/</li>
+<li>数组数据：value1/value2/value3/ 不同消息有相同的协议头、序列化方式。</li>
+</ol>
+</li>
+</ol>
+</blockquote>
+<h2 id="3-斗鱼房间信息"><a href="#3-斗鱼房间信息" class="headerlink" title="3. 斗鱼房间信息"></a>3. 斗鱼房间信息</h2><h3 id="1-房间登录"><a href="#1-房间登录" class="headerlink" title="1. 房间登录"></a>1. 房间登录</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">type@=loginreq/roomid@=$&#123;room&#125;</span><br><span class="line"><span class="comment">// $&#123;room&#125; 替换为要进入的房间号</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-房间加入组"><a href="#2-房间加入组" class="headerlink" title="2. 房间加入组"></a>2. 房间加入组</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">type@=joingroup/rid@=$&#123;room&#125;/gid@=<span class="number">0</span>/</span><br><span class="line"><span class="comment">// $&#123;room&#125; 替换为要进入的房间号</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-房间心跳"><a href="#3-房间心跳" class="headerlink" title="3. 房间心跳"></a>3. 房间心跳</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type@=mrkl/</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-接收全部礼物（可选）"><a href="#4-接收全部礼物（可选）" class="headerlink" title="4. 接收全部礼物（可选）"></a>4. 接收全部礼物（可选）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type@=dmfbdreq/dfl@=sn<span class="meta">@AA</span>=<span class="number">105</span><span class="meta">@ASss</span><span class="meta">@AA</span>=<span class="number">0</span><span class="meta">@AS</span><span class="meta">@Ssn</span><span class="meta">@AA</span>=<span class="number">106</span><span class="meta">@ASss</span><span class="meta">@AA</span>=<span class="number">0</span><span class="meta">@AS</span><span class="meta">@Ssn</span><span class="meta">@AA</span>=<span class="number">107</span><span class="meta">@ASss</span><span class="meta">@AA</span>=<span class="number">0</span><span class="meta">@AS</span><span class="meta">@Ssn</span><span class="meta">@AA</span>=<span class="number">108</span><span class="meta">@ASss</span><span class="meta">@AA</span>=<span class="number">0</span><span class="meta">@AS</span><span class="meta">@Ssn</span><span class="meta">@AA</span>=<span class="number">110</span><span class="meta">@ASss</span><span class="meta">@AA</span>=<span class="number">0</span><span class="meta">@AS</span><span class="meta">@S</span>/</span><br></pre></td></tr></table></figure>
+
+<div align=right>
+    <img src="C:\Users\LiDaShuang\AppData\Roaming\Typora\typora-user-images\image-20200314115618004.png">
+</div>
+
+<p>随便进入一个斗鱼房间可以，可以发现和斗鱼弹幕服务器交互的数据情况 （斗鱼弹幕服务WebSocket地址 <strong>wss://danmuproxy.douyu.com:8502/</strong>）</p>
+<ol>
+<li>发送登录数据</li>
+<li>发送加入组数据</li>
+<li>发送心跳数据（每隔45S发送一条心跳）</li>
+<li>接收斗鱼服务器推送的房间</li>
+</ol>
+<h3 id="5-发送数据"><a href="#5-发送数据" class="headerlink" title="5. 发送数据"></a>5. 发送数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 斗鱼发送消息</span></span><br><span class="line"><span class="comment">  * 消息类型 689 客户端发送给斗鱼服务器</span></span><br><span class="line"><span class="comment">  * 斗鱼消息 = 消息头部</span></span><br><span class="line"><span class="comment">  *          (</span></span><br><span class="line"><span class="comment">  *              消息总长度 [ 小端模式转换 4 ( 这个不算总长度中 )]</span></span><br><span class="line"><span class="comment">  *              消息总长度 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">  *              消息类型 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">  *         )</span></span><br><span class="line"><span class="comment">  *         + 消息内容</span></span><br><span class="line"><span class="comment">  *         + 结束符号 (0)</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">byte</span>[] sendMessage(String message) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="comment">// 判断消息是否为 null 和 websocket是否关闭</span></span><br><span class="line">    <span class="keyword">if</span> (message == <span class="keyword">null</span> || <span class="keyword">this</span>.isClosed()) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    ByteArrayOutputStream outputStream = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 计算长度</span></span><br><span class="line">        <span class="keyword">int</span> len = <span class="number">4</span> + <span class="number">4</span> + <span class="number">1</span> + message.length();</span><br><span class="line">        outputStream = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">        <span class="comment">// 写入长度 1</span></span><br><span class="line">        outputStream.write(ToolUtil.intToBytesLittle(len));</span><br><span class="line">        <span class="comment">// 写入长度 2</span></span><br><span class="line">        outputStream.write(ToolUtil.intToBytesLittle(len));</span><br><span class="line">        <span class="comment">// 写入消息类型</span></span><br><span class="line">        outputStream.write(ToolUtil.intToBytesLittle(<span class="number">689</span>));</span><br><span class="line">        <span class="comment">// 写入消息内容</span></span><br><span class="line">        outputStream.write(message.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">        <span class="comment">// 写入结束符</span></span><br><span class="line">        outputStream.write(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> outputStream.toByteArray();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Exception(e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (outputStream != <span class="keyword">null</span>) outputStream.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="6-接收数据"><a href="#6-接收数据" class="headerlink" title="6. 接收数据"></a>6. 接收数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 斗鱼接收消息</span></span><br><span class="line"><span class="comment">  * 消息类型 690 斗鱼服务器推送给客户端的类型</span></span><br><span class="line"><span class="comment">  * 斗鱼消息 = 消息头部</span></span><br><span class="line"><span class="comment">  *          (</span></span><br><span class="line"><span class="comment">  *              消息总长度 [ 小端模式转换 4 ( 这个不算总长度中 )]</span></span><br><span class="line"><span class="comment">  *              消息总长度 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">  *              消息类型 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">  *          )</span></span><br><span class="line"><span class="comment">  *         + 消息内容</span></span><br><span class="line"><span class="comment">  *         + 结束符号 (0)</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> List&lt;P6eDYModel.Message&gt; analysisMessage(<span class="keyword">byte</span>[] data) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="comment">// 创建介绍消息对象的集合</span></span><br><span class="line">    List&lt;P6eDYModel.Message&gt; messageList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 一次推送的流里面可能有多条数据</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (data.length - index &gt;= <span class="number">4</span>) &#123;</span><br><span class="line">                <span class="keyword">byte</span>[] len1 = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                <span class="comment">// 小端模式转换回 int 类型</span></span><br><span class="line">                <span class="keyword">int</span> lenContent = ToolUtil.bytesToIntLittle(len1);</span><br><span class="line">                <span class="keyword">if</span> (lenContent &gt; <span class="number">8</span> &amp;&amp; data.length &gt;= (index + lenContent)) &#123;</span><br><span class="line">                    P6eDYModel.Message message = <span class="keyword">new</span> P6eDYModel.Message();</span><br><span class="line">                    message.setLength1(lenContent);</span><br><span class="line">                    <span class="keyword">byte</span>[] len2 = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                    message.setLength2(ToolUtil.bytesToIntLittle(len2));</span><br><span class="line">                    <span class="keyword">byte</span>[] type = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                    message.setType(ToolUtil.bytesToIntLittle(type));</span><br><span class="line">                    <span class="keyword">byte</span>[] contentBytes = <span class="keyword">new</span> <span class="keyword">byte</span>[lenContent + <span class="number">4</span>];</span><br><span class="line">                    ToolUtil.arrayJoinByte(contentBytes, len1, len2, type);</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> _index = index; index &lt; _index + lenContent - <span class="number">12</span>; index++)</span><br><span class="line">                        contentBytes[index - _index + <span class="number">12</span>] = data[index];</span><br><span class="line">                    message.setBytes(contentBytes);</span><br><span class="line">                    message.setContent(<span class="keyword">new</span> String(contentBytes, StandardCharsets.UTF_8).substring(<span class="number">12</span>));</span><br><span class="line">                    <span class="comment">// 核对一下数据</span></span><br><span class="line">                    <span class="keyword">if</span> (message.getLength1() == message.getLength2()</span><br><span class="line">                        &amp;&amp; message.getType() == <span class="number">690</span>) &#123;</span><br><span class="line">                        messageList.add(message);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Exception(e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> messageList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-房间信息爬取代码"><a href="#4-房间信息爬取代码" class="headerlink" title="4. 房间信息爬取代码"></a>4. 房间信息爬取代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dyy.p6e.broadcast;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.dyy.p6e.broadcast.dy.P6eDYModel;</span><br><span class="line"><span class="keyword">import</span> com.dyy.p6e.broadcast.support.utils.ToolUtil;</span><br><span class="line"><span class="keyword">import</span> org.java_websocket.client.WebSocketClient;</span><br><span class="line"><span class="keyword">import</span> org.java_websocket.handshake.ServerHandshake;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.net.URI;</span><br><span class="line"><span class="keyword">import</span> java.net.URISyntaxException;</span><br><span class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 斗鱼 (https://www.douyu.com/) 房间弹幕获取</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">P6eDYBroadcast</span> <span class="keyword">extends</span> <span class="title">WebSocketClient</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Logger logger = LoggerFactory.getLogger(P6eDYBroadcast<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> _retryLength = <span class="number">3</span>; <span class="comment">// 重试次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> rid; <span class="comment">// 房间编号</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _retry = <span class="number">0</span>; <span class="comment">// 现在重试的次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _status = <span class="number">0</span>; <span class="comment">// 状态码 0 不启用重试机制 1 启用重试机制</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> P6eDYBroadcast <span class="title">create</span><span class="params">(Integer rid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> P6eDYBroadcast(<span class="keyword">new</span> URI(<span class="string">"wss://danmuproxy.douyu.com:8506/"</span>), rid);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (URISyntaxException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"[ DY =&gt; "</span> + rid + <span class="string">" ] connect create fail."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> P6eDYBroadcast <span class="title">create</span><span class="params">(Integer rid, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> P6eDYBroadcast(<span class="keyword">new</span> URI(<span class="string">"wss://danmuproxy.douyu.com:8506/"</span>), rid, retry);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (URISyntaxException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"[ DY =&gt; "</span> + rid + <span class="string">" ] connect create fail."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">P6eDYBroadcast</span><span class="params">(URI uri, <span class="keyword">int</span> rid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(uri);</span><br><span class="line">        <span class="keyword">this</span>.rid = rid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">P6eDYBroadcast</span><span class="params">(URI uri, <span class="keyword">int</span> rid, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(uri);</span><br><span class="line">        <span class="keyword">this</span>.rid = rid;</span><br><span class="line">        <span class="keyword">this</span>._retry = retry;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onOpen</span><span class="params">(ServerHandshake handshake)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 发送初始化的数据</span></span><br><span class="line">        logger.info(<span class="string">"[ DY =&gt; "</span> + rid + <span class="string">" ] onOpen ==&gt; HttpStatus: "</span> + handshake.getHttpStatus()</span><br><span class="line">                + <span class="string">", HttpStatusMessage: "</span> + handshake.getHttpStatusMessage());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.send(<span class="keyword">this</span>.sendMessage(<span class="string">"type@=loginreq/roomid@=$&#123;room&#125;"</span>));</span><br><span class="line">            <span class="keyword">this</span>.send(<span class="keyword">this</span>.sendMessage(<span class="string">"type@=joingroup/rid@=$&#123;room&#125;/gid@=0/"</span>));</span><br><span class="line">            <span class="keyword">this</span>.send(<span class="keyword">this</span>.sendMessage(<span class="string">"type@=dmfbdreq/dfl@=sn@AA=105"</span> </span><br><span class="line">                    + <span class="string">"@ASss@AA=0@AS@Ssn@AA=106@ASss@AA=0@AS@Ssn@AA=107@ASss@AA=0"</span> </span><br><span class="line">                    + <span class="string">"@AS@Ssn@AA=108@ASss@AA=0@AS@Ssn@AA=110@ASss@AA=0@AS@S/"</span>));</span><br><span class="line">            <span class="comment">// 定时器 用来发送心跳</span></span><br><span class="line">            <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.run();</span><br><span class="line">                    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            <span class="keyword">if</span> (!isClosed()) send(sendMessage(<span class="string">"type@=mrkl/"</span>));</span><br><span class="line">                            <span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">                            Thread.sleep(<span class="number">450000</span>);</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                            e.printStackTrace();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;.start();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(String s)</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(ByteBuffer bytes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            List&lt;P6eDYModel.Message&gt; list = <span class="keyword">this</span>.analysisMessage(bytes.array());</span><br><span class="line">            <span class="keyword">for</span> (P6eDYModel.Message message : list) &#123;</span><br><span class="line">                <span class="comment">// 判断是否登录成功</span></span><br><span class="line">                <span class="keyword">if</span> (message.getContent().startsWith(<span class="string">"type@=loginres"</span>)) &#123;</span><br><span class="line">                    <span class="comment">// 如果是登录成功那么就启动重连机制</span></span><br><span class="line">                    <span class="keyword">this</span>._retry = <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">this</span>._status = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                logger.info(message.toString()); <span class="comment">// 打印房间消息</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClose</span><span class="params">(<span class="keyword">int</span> i, String s, <span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"[ DY "</span> + rid + <span class="string">" ] onClose ==&gt; i: "</span> + i + <span class="string">", s: "</span> + s + <span class="string">", b: "</span> + b);</span><br><span class="line">        <span class="keyword">if</span> (i != <span class="number">1000</span> &amp;&amp; _status == <span class="number">1</span> &amp;&amp; _retry &lt; _retryLength) &#123;</span><br><span class="line">            <span class="comment">// 如果关闭的状态码不是 1000 且启动了重试机制且重试次数在数据内，那么进行重试连接</span></span><br><span class="line">            _retry ++;</span><br><span class="line">            logger.info(<span class="string">"[ DY ] ( "</span> + rid + <span class="string">" ) connect retrying [ "</span> + _retry + <span class="string">" ]."</span>);</span><br><span class="line">            P6eDYBroadcast.create(rid, _retry).connect();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Exception e)</span> </span>&#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        logger.error(<span class="string">"[ DY "</span> + rid + <span class="string">"] onError ==&gt; "</span> + e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 斗鱼发送消息</span></span><br><span class="line"><span class="comment">     * 消息类型 689 客户端发送给斗鱼服务器</span></span><br><span class="line"><span class="comment">     * 斗鱼消息 = 消息头部</span></span><br><span class="line"><span class="comment">     *          (</span></span><br><span class="line"><span class="comment">     *              消息总长度 [ 小端模式转换 4 ( 这个不算总长度中 )]</span></span><br><span class="line"><span class="comment">     *              消息总长度 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">     *              消息类型 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">     *         )</span></span><br><span class="line"><span class="comment">     *         + 消息内容</span></span><br><span class="line"><span class="comment">     *         + 结束符号 (0)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">byte</span>[] sendMessage(String message) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 判断消息是否为 null 和 websocket是否关闭</span></span><br><span class="line">        <span class="keyword">if</span> (message == <span class="keyword">null</span> || <span class="keyword">this</span>.isClosed()) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] result = <span class="keyword">null</span>;</span><br><span class="line">        ByteArrayOutputStream outputStream = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> len = <span class="number">4</span> + <span class="number">4</span> + <span class="number">1</span> + message.length();</span><br><span class="line">            outputStream = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">            outputStream.write(ToolUtil.intToBytesLittle(len));</span><br><span class="line">            outputStream.write(ToolUtil.intToBytesLittle(len));</span><br><span class="line">            outputStream.write(ToolUtil.intToBytesLittle(<span class="number">689</span>));</span><br><span class="line">            outputStream.write(message.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">            outputStream.write(<span class="number">0</span>);</span><br><span class="line">            result = outputStream.toByteArray();</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            logger.info(<span class="string">"[ DY "</span> + rid + <span class="string">" ] ==&gt; SEND MESSAGE ( "</span></span><br><span class="line">                    + (result != <span class="keyword">null</span> ? <span class="keyword">new</span> String(result) : <span class="string">""</span>) + <span class="string">" )"</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (outputStream != <span class="keyword">null</span>) outputStream.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 斗鱼接收消息</span></span><br><span class="line"><span class="comment">     * 消息类型 690 斗鱼服务器推送给客户端的类型</span></span><br><span class="line"><span class="comment">     * 斗鱼消息 = 消息头部</span></span><br><span class="line"><span class="comment">     *          (</span></span><br><span class="line"><span class="comment">     *              消息总长度 [ 小端模式转换 4 ( 这个不算总长度中 )]</span></span><br><span class="line"><span class="comment">     *              消息总长度 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">     *              消息类型 [ 小端模式转换 4 ]</span></span><br><span class="line"><span class="comment">     *          )</span></span><br><span class="line"><span class="comment">     *         + 消息内容</span></span><br><span class="line"><span class="comment">     *         + 结束符号 (0)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;P6eDYModel.Message&gt; analysisMessage(<span class="keyword">byte</span>[] data) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 创建介绍消息对象的集合</span></span><br><span class="line">        List&lt;P6eDYModel.Message&gt; messageList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (data.length - index &gt;= <span class="number">4</span>) &#123;</span><br><span class="line">                    <span class="keyword">byte</span>[] len1 = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                    <span class="keyword">int</span> lenContent = ToolUtil.bytesToIntLittle(len1);</span><br><span class="line">                    <span class="keyword">if</span> (lenContent &gt; <span class="number">8</span> &amp;&amp; data.length &gt;= (index + lenContent)) &#123;</span><br><span class="line">                        P6eDYModel.Message message = <span class="keyword">new</span> P6eDYModel.Message();</span><br><span class="line">                        message.setLength1(lenContent);</span><br><span class="line">                        <span class="keyword">byte</span>[] len2 = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                        message.setLength2(ToolUtil.bytesToIntLittle(len2));</span><br><span class="line">                        <span class="keyword">byte</span>[] type = <span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; data[index++], data[index++], data[index++], data[index++] &#125;;</span><br><span class="line">                        message.setType(ToolUtil.bytesToIntLittle(type));</span><br><span class="line">                        <span class="keyword">byte</span>[] contentBytes = <span class="keyword">new</span> <span class="keyword">byte</span>[lenContent + <span class="number">4</span>];</span><br><span class="line">                        ToolUtil.arrayJoinByte(contentBytes, len1, len2, type);</span><br><span class="line">                        <span class="keyword">for</span> (<span class="keyword">int</span> _index = index; index &lt; _index + lenContent - <span class="number">12</span>; index++)</span><br><span class="line">                            contentBytes[index - _index + <span class="number">12</span>] = data[index];</span><br><span class="line">                        message.setBytes(contentBytes);</span><br><span class="line">                        message.setContent(<span class="keyword">new</span> String(contentBytes, StandardCharsets.UTF_8).substring(<span class="number">12</span>));</span><br><span class="line">                        <span class="comment">// 核对一下数据</span></span><br><span class="line">                        <span class="keyword">if</span> (message.getLength1() == message.getLength2()</span><br><span class="line">                                &amp;&amp; message.getType() == <span class="number">690</span>) &#123;</span><br><span class="line">                            messageList.add(message);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(e);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> messageList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ToolUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以小端模式将 int 转成 byte[]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] intToBytesLittle(<span class="keyword">int</span> value) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">byte</span> [] &#123;</span><br><span class="line">                (<span class="keyword">byte</span>) (value &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xFF</span>),</span><br><span class="line">                (<span class="keyword">byte</span>) ((value &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xFF</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 以小端模式将 byte[] 转成 int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bytesToIntLittle</span><span class="params">(<span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ((bytes[<span class="number">0</span>] &amp; <span class="number">0xFF</span>)</span><br><span class="line">                | ((bytes[<span class="number">1</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">8</span>)</span><br><span class="line">                | ((bytes[<span class="number">2</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">16</span>)</span><br><span class="line">                | ((bytes[<span class="number">3</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">24</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * hex转byte数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] hexToByte(String hex)&#123;</span><br><span class="line">        <span class="keyword">int</span> m, n;</span><br><span class="line">        <span class="keyword">int</span> byteLen = hex.length() / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] ret = <span class="keyword">new</span> <span class="keyword">byte</span>[byteLen];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; byteLen; i++) &#123;</span><br><span class="line">            m = i * <span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">            n = m + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> intVal = Integer.decode(<span class="string">"0x"</span> + hex.substring(i * <span class="number">2</span>, m) + hex.substring(m, n));</span><br><span class="line">            ret[i] = (<span class="keyword">byte</span>) intVal;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * byte数组转hex</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">bytesToHex</span><span class="params">(<span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">byte</span> aByte : bytes) &#123;</span><br><span class="line">            String hex = Integer.toHexString(aByte &amp; <span class="number">0xFF</span>);</span><br><span class="line">            <span class="keyword">if</span> (hex.length() &lt; <span class="number">2</span>) sb.append(<span class="number">0</span>);</span><br><span class="line">            sb.append(hex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * byte 数组和并</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">arrayJoinByte</span><span class="params">(<span class="keyword">byte</span>[] a, <span class="keyword">byte</span>[]... b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">byte</span>[] bytes : b) <span class="keyword">for</span> (<span class="keyword">byte</span> by : bytes) a[count++] = by;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/04/Web%20Socket%20%E8%8E%B7%E5%8F%96%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF-%E6%96%97%E9%B1%BC/">http://lidashuang.com/2020/04/04/Web%20Socket%20%E8%8E%B7%E5%8F%96%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF-%E6%96%97%E9%B1%BC/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/04/ws_1/">Web Socket 基础概念</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/Web%20Socket%20%E8%8E%B7%E5%8F%96%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF-BLIBLI/">Web Socket 获取房间信息-BLIBLI</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Web Socket 基础概念 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Web Socket 基础概念</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 4, 2020&nbsp;&nbsp;9:24:26</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Web-Socket-基础概念"><a href="#Web-Socket-基础概念" class="headerlink" title="Web Socket 基础概念"></a>Web Socket 基础概念</h1><h2 id="1-网络协议基本认识"><a href="#1-网络协议基本认识" class="headerlink" title="1. 网络协议基本认识"></a>1. 网络协议基本认识</h2><h4 id="首先我们来回顾一下-OSI-网络分层模型："><a href="#首先我们来回顾一下-OSI-网络分层模型：" class="headerlink" title="首先我们来回顾一下 OSI 网络分层模型："></a>首先我们来回顾一下 OSI 网络分层模型：</h4><table>
+<thead>
+<tr>
+<th>分层</th>
+<th>功能</th>
+<th>CP / IP 协议族</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>应用层</td>
+<td>文件传输，电子邮件，文件服务，虚拟终端</td>
+<td>TFTP，HTTP，SNMP，FTP，SMTP，DNS，Telnet</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>数据格式化，代码转换，数据加密</td>
+<td>没有协议</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>解除或建立与别的接点的联系</td>
+<td>没有协议</td>
+</tr>
+<tr>
+<td>传输层（运输层）</td>
+<td>提供端对端的接口</td>
+<td>TCP，UDP</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>为数据包选择路由</td>
+<td>IP，ICMP，RIP，OSPF，BGP，IGMP</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>传输有地址的帧以及错误检测功能</td>
+<td>SLIP，CSLIP，PPP，ARP，RARP，MTU</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>以二进制数据形式在物理媒体上传输数据</td>
+<td>ISO2110，IEEE802。IEEE802.2</td>
+</tr>
+</tbody></table>
+<h4 id="HTTP-协议"><a href="#HTTP-协议" class="headerlink" title="HTTP 协议"></a>HTTP 协议</h4><ul>
+<li><p>HTTP（HyperText Transfer Protocol）即超文本传输协议，是一种详细规定了浏览器和万维网服务器之间互相通信的规则，它是万维网交换信息的基础，它允许将HTML（超文本标记语言）文档从Web服务器传送到Web浏览器。</p>
+</li>
+<li><p>HTTP协议目前最新版的版本是1.1，HTTP是一种无状态的协议，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而服务器不能主动向客户端发送数据。</p>
+</li>
+<li><p>HTTP是一个基于TCP/IP通信协议来传递数据（HTML 文件, 图片文件, 查询结果等）。</p>
+</li>
+<li><p>HTTP 三大特点：</p>
+<ul>
+<li>HTTP是无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。</li>
+<li>HTTP是媒体独立的：这意味着，只要客户端和服务器知道如何处理的数据内容，任何类型的数据都可以通过HTTP发送。客户端以及服务器指定使用适合的MIME-type内容类型。</li>
+<li>HTTP是无状态：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。</li>
+</ul>
+</li>
+</ul>
+<h4 id="HTTP-缺点"><a href="#HTTP-缺点" class="headerlink" title="HTTP 缺点"></a>HTTP 缺点</h4><ul>
+<li>多次连接带来的性能损耗（即便是HTTP1.1，每个单独的网页文件的请求和应答仍然需要使用各自的连接）。</li>
+</ul>
+<ol start="2">
+<li>HTTP协议的会话都是客户端向服务器发起的。服务器不能主动发送消息给客户端。某些需要服务器向客户端推送通知的场景，客户端需要不断轮询服务器。</li>
+<li>HTTP是非状态性的，每次都要重新传输鉴别信息，否则一旦断开一次，服务器就不知道客户端是谁了。</li>
+</ol>
+<ul>
+<li>HTTP请求头信息多，传送很重。</li>
+</ul>
+<h2 id="2-Web-Socket-诞生"><a href="#2-Web-Socket-诞生" class="headerlink" title="2. Web Socket 诞生"></a>2. Web Socket 诞生</h2><blockquote>
+<p><strong>因为 HTTP 协议有一个缺陷：通信只能由客户端发起。</strong></p>
+<p>这种单向请求的特点，注定了如果服务器有连续的状态变化，客户端要获知就非常麻烦。我们只能使用轮询：每隔一段时候，就发出一个询问，了解服务器有没有新的信息。最典型的场景就是聊天室。轮询的效率低，非常浪费资源（因为必须不停连接，或者 HTTP 连接始终打开）。因此，工程师们一直在思考，有没有更好的方法。Web Socket 就是这样诞生了。</p>
+</blockquote>
+<p>Web Socket 协议在 2008 年诞生，2011年成为国际标准，所有浏览器都已经支持了。</p>
+<p>它的最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于<a href="https://en.wikipedia.org/wiki/Push_technology" target="_blank" rel="noopener">服务器推送技术</a>的一种。</p>
+<p>其他特点包括：</p>
+<ol>
+<li>建立在 TCP 协议之上，服务器端的实现比较容易。</li>
+<li>与 HTTP 协议有着良好的兼容性。默认端口也是80和443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。</li>
+<li>数据格式比较轻量，性能开销小，通信高效。</li>
+<li>可以发送文本，也可以发送二进制数据。</li>
+<li>没有同源限制，客户端可以与任意服务器通信。</li>
+<li>协议标识符是<code>ws</code>（如果加密，则为<code>wss</code>），服务器网址就是 URL。</li>
+</ol>
+<h2 id="3-Web-Socket-协议"><a href="#3-Web-Socket-协议" class="headerlink" title="3. Web Socket 协议"></a>3. Web Socket 协议</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">General:</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求 URL 的地址</span></span><br><span class="line">Request URL: wss:<span class="comment">//***/**  </span></span><br><span class="line"><span class="comment">// 请求 URL 的方法  ( 只有GET )</span></span><br><span class="line">Request Method: GET</span><br><span class="line"> </span><br><span class="line">Response Headers:</span><br><span class="line"><span class="comment">// 返回的状态码和状态信息</span></span><br><span class="line">Status Code: <span class="number">101</span> Switching Protocols</span><br><span class="line"><span class="comment">// 协议升级</span></span><br><span class="line">Connection: Upgrade</span><br><span class="line"><span class="comment">// 返回 Sec-WebSocket-* 表示 WebSocket 连接成功</span></span><br><span class="line">Sec-WebSocket-Accept: r9QDbvbmbVUmSlwNkjC+QcCH/<span class="number">58</span>=</span><br><span class="line">Sec-WebSocket-Version: <span class="number">13</span></span><br><span class="line"><span class="comment">// 协议升级为 WebSocket</span></span><br><span class="line">Upgrade: websocket</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">Request Headers:</span><br><span class="line"></span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh,zh-CN;q=<span class="number">0.9</span></span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Connection: Upgrade</span><br><span class="line">Host: danmuproxy.douyu.com:<span class="number">8504</span></span><br><span class="line">Origin: https:<span class="comment">//****</span></span><br><span class="line">Pragma: no-cache</span><br><span class="line">Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits</span><br><span class="line">Sec-WebSocket-Key: gwbOcNKjh7jED9GzxqNvUg==</span><br><span class="line">Sec-WebSocket-Version: <span class="number">13</span></span><br><span class="line">Upgrade: websocket</span><br><span class="line">User-Agent: Mozilla/<span class="number">5.0</span> (Windows NT <span class="number">10.0</span>; Win64; x64) AppleWebKit/<span class="number">537.36</span> (KHTML, like Gecko) Chrome/<span class="number">80.0</span><span class="number">.3987</span><span class="number">.132</span> Safari/<span class="number">537.36</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-Web-Socket-接口-（-HTML-）"><a href="#4-Web-Socket-接口-（-HTML-）" class="headerlink" title="4. Web Socket  接口 （ HTML ）"></a>4. Web Socket  接口 （ HTML ）</h2><h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> = <span class="keyword">new</span> WebSocket(url[, protocols])</span><br></pre></td></tr></table></figure>
+
+<h3 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WebSocket.CONNECTING	<span class="number">0</span></span><br><span class="line">WebSocket.OPEN			<span class="number">1</span></span><br><span class="line">WebSocket.CLOSING		<span class="number">2</span></span><br><span class="line">WebSocket.CLOSED		<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><table>
+<thead>
+<tr>
+<th>属性名称</th>
+<th>描述</th>
+<th>读 / 写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebSocket.binaryType</td>
+<td>使用二进制的数据类型连接</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket.bufferedAmount</td>
+<td>未发送至服务器的字节数</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>WebSocket.extensions</td>
+<td>服务器选择的扩展</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>WebSocket.onclose</td>
+<td>用于指定连接关闭后的回调函数</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket.onerror</td>
+<td>用于指定连接失败后的回调函数</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket.onmessage</td>
+<td>用于指定当从服务器接受到信息时的回调函数</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket.onopen</td>
+<td>用于指定连接成功后的回调函数</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket.protocol</td>
+<td>服务器选择的下属协议</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>WebSocket.readyState</td>
+<td>当前的链接状态</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>WebSocket.url</td>
+<td>Web Socket 的绝对路径</td>
+<td>只读</td>
+</tr>
+</tbody></table>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebSocket.close([code[, reason]])</td>
+<td>关闭当前链接</td>
+</tr>
+<tr>
+<td>WebSocket.send(data)</td>
+<td>向服务器发送数据</td>
+</tr>
+</tbody></table>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// WebSocket 常量</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'WebSocket.CONNECTING'</span>, WebSocket.CONNECTING);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'WebSocket.OPEN'</span>, WebSocket.OPEN);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'WebSocket.CLOSING'</span>, WebSocket.CLOSING);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'WebSocket.CLOSED'</span>, WebSocket.CLOSED);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接 WebSocket</span></span><br><span class="line"><span class="keyword">const</span> websocket = <span class="keyword">new</span> WebSocket(<span class="string">"wss://danmuproxy.douyu.com:8502/"</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'url'</span>, websocket.url); <span class="comment">// WebSocket Url</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'readyState'</span>, websocket.readyState); <span class="comment">// WebSocket 当前连接状态</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'protocol'</span>, websocket.protocol); <span class="comment">// WebSocket 服务器选择的下属协议</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'binaryType'</span>, websocket.binaryType); <span class="comment">// WebSocket 使用二进制的数据类型连接</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'bufferedAmount'</span>, websocket.bufferedAmount); <span class="comment">// WebSocket 未发送至服务器的字节数</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'extensions'</span>, websocket.extensions); <span class="comment">// WebSocket 服务器选择的扩展</span></span><br><span class="line"></span><br><span class="line">websocket.onclose = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'onclose'</span>, e);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">websocket.onerror = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'onerror'</span>, e);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">websocket.onmessage = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'onmessage'</span>, e);</span><br><span class="line">    websocket.close();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">websocket.onopen = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'onopen'</span>, e);</span><br><span class="line">    <span class="keyword">const</span> login = <span class="string">'8c0000008c000000b102000074797065403d6c6f67696e7265712f726f6f6d6964403d33323839322f64666c403d736e4041413d31303540415373734041413d312f757365726e616d65403d76697369746f72333536303636362f756964403d313331323138333531342f766572403d32303139303631302f61766572403d3231383130313930312f6374403d302f00'</span>;</span><br><span class="line">    <span class="keyword">const</span> u8 = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(login.length / <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; login.length / <span class="number">2</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">let</span> subStr = login.substring(i * <span class="number">2</span>, i * <span class="number">2</span> + <span class="number">2</span>);</span><br><span class="line">        u8[i] = <span class="built_in">parseInt</span>(subStr, <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(u8.slice());</span><br><span class="line">    websocket.send(u8.slice());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+<blockquote>
+<p>最后更新时间 2020-03-13</p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/04/Web%20Socket%20%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%20%201/">http://lidashuang.com/2020/04/04/Web%20Socket%20%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%20%201/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/04/Web%20Socket%20%E7%81%AB%E7%8C%AB/">Web Socket 火猫</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/leetcode_49_%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%E5%88%86%E7%BB%84/">leetcode_49_字母异位词分组</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
