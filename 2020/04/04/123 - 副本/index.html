@@ -223,7 +223,7 @@
 
 
 <h2 id="3-Hexo-主题"><a href="#3-Hexo-主题" class="headerlink" title="3. Hexo 主题"></a>3. Hexo 主题</h2><blockquote>
-<p>Hexo 默认的主题不是很好看，我们可以进入 <a href="https://hexo.io/themes/" target="_blank" rel="noopener">Hexo的主题</a> 网站进行，下载自己喜欢的主题。</p>
+<p>Hexo 默认的主题不是很好看，我们可以进入 <a href="https://hexo.io/themes/" target="_blank" rel="noopener">Hexo 的主题</a> 网站进行，下载自己喜欢的主题。</p>
 </blockquote>
 <h3 id="1-下载主题"><a href="#1-下载主题" class="headerlink" title="1. 下载主题"></a>1. 下载主题</h3><blockquote>
 <p>本博客主题 <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank" rel="noopener">https://github.com/Siricee/hexo-theme-Chic</a></p>
@@ -243,9 +243,67 @@
 <h3 id="2-切换主题"><a href="#2-切换主题" class="headerlink" title="2. 切换主题"></a>2. 切换主题</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">//</span> <span class="string">_config.yml</span></span><br><span class="line"><span class="comment"># Hexo Configuration</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/configuration.html</span></span><br><span class="line"><span class="comment">## Source: https://github.com/hexojs/hexo/</span></span><br><span class="line"></span><br><span class="line"><span class="string">...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="comment"># 修改为自己下载的主题文件名称</span></span><br><span class="line"><span class="comment"># 默认主题为 landscape 不需要填写该项</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">chic</span></span><br><span class="line"></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="4-发布Hexo"><a href="#4-发布Hexo" class="headerlink" title="4. 发布Hexo"></a>4. 发布Hexo</h2><blockquote>
-<p>根据上面的安装步骤可以知道，Hexo 打包命令为 </p>
-<p>hexo generate</p>
+<p>根据上面的安装步骤可以知道，通过 Hexo 打包命令生成 public 文件夹下面的文件。</p>
 </blockquote>
+<h3 id="1-通过-Nginx-部署在服务器"><a href="#1-通过-Nginx-部署在服务器" class="headerlink" title="1. 通过 Nginx 部署在服务器"></a>1. 通过 Nginx 部署在服务器</h3><h4 id="1-安装-Nginx"><a href="#1-安装-Nginx" class="headerlink" title="1. 安装 Nginx"></a>1. 安装 Nginx</h4><blockquote>
+<p>Nginx (engine x) 是一个高性能的 HTTP 和反向代理 Web 服务器，同时也提供了IMAP/POP3/SMTP 服务。</p>
+<p>Nginx 安装方式不做描述，不会可以自行百度。</p>
+</blockquote>
+<h4 id="2-修改-Nginx"><a href="#2-修改-Nginx" class="headerlink" title="2. 修改 Nginx"></a>2. 修改 Nginx</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">// nginx.conf</span><br><span class="line">// /etc/niginx/</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen       80 default_server;</span><br><span class="line">        listen       [::]:80 default_server;</span><br><span class="line">        server_name  _;</span><br><span class="line">        root         /usr/share/nginx/html;</span><br><span class="line"></span><br><span class="line">        # Load configuration files for the default server block.</span><br><span class="line">        include /etc/nginx/default.d/*.conf;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            # 这里修改路由的静态文件路径</span><br><span class="line">            # 默认 /usr/share/nginx/html 的文件夹</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page 404 /404.html;</span><br><span class="line">            location = /40x.html &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page 500 502 503 504 /50x.html;</span><br><span class="line">            location = /50x.html &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>将 public 文件下面的文件复制到 /usr/share/nginx/html/ 文件夹下面来</p>
+</blockquote>
+<h4 id="3-启动-Nginx"><a href="#3-启动-Nginx" class="headerlink" title="3. 启动 Nginx"></a>3. 启动 Nginx</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>启动完成后可以在本机访问该地址，看是否有数据返回，如果有则代表安装成功。我们想通暴露在公网被别人访问的到，需要打开对应的端口。</p>
+<p>注意：服务器厂商提供的<strong>安全组</strong>配置信息，和本机的<strong>防火墙</strong>策略。</p>
+</blockquote>
+<h3 id="2-通过-github-发布"><a href="#2-通过-github-发布" class="headerlink" title="2. 通过 github 发布"></a>2. 通过 github 发布</h3><h4 id="1-注册-github-的账号并登录"><a href="#1-注册-github-的账号并登录" class="headerlink" title="1. 注册 github 的账号并登录"></a>1. 注册 github 的账号并登录</h4><blockquote>
+<p>GitHub 是一个面向开源及私有软件项目的托管平台，因为只支持git 作为唯一的版本库格式进行托管，故名 GitHub。</p>
+</blockquote>
+<div>
+    <img src="/images/init/image-20200404105000140.png"/>
+</div>
+
+<h4 id="2-配置-github-的-SSH-密钥"><a href="#2-配置-github-的-SSH-密钥" class="headerlink" title="2. 配置 github 的 SSH 密钥"></a>2. 配置 github 的 SSH 密钥</h4><div>
+    <img src="/images/init/image-20200404112546674.png"/>
+</div>
+
+
+
+<p><strong>第一步 看看是否存在 SSH 密钥 (KEYS)</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 首先，我们需要看看是否看看本机是否存在 SSH KEYS </span><br><span class="line">// 检查你本机用户 home 目录下是否存在 .ssh 目录</span><br><span class="line">// 如果，不存在此目录，则需要创建新的 SSH 密钥，否则不需要创建 SSH 密钥</span><br><span class="line">cd ~/. ssh</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二步 创建一对新的 SSH 密钥 (KEYS)</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C "邮箱"</span><br><span class="line">// 输出内容</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/c/Users/****/.ssh/id_rsa):</span><br><span class="line">Created directory '/c/Users/***/.ssh'.</span><br><span class="line">Enter passphrase (empty for no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved in /c/Users/****/.ssh/id_rsa</span><br><span class="line">Your public key has been saved in /c/Users/****/.ssh/id_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:**** ***</span><br><span class="line">// 在执行过程中可能需要输入的文件名称和密码以及确认密码，可以使用默认的方式直接回车</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步 将本地的公钥添加到 github 中</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 运行如下命令，将公钥的内容复制到系统粘贴板中</span><br><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<div>
+    <img src="/images/init/image-20200404172313037.png"/>
+</div>
+
+<p><strong>第四步 测试是否安装成功</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 测试是否安装成功</span><br><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 如果是第一次使用没有设置名称和邮箱，可以通过下面代码设置</span><br><span class="line">git config --global user.name "名称"</span><br><span class="line">git config --global user.email  "邮箱"</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-创建一个公开项目"><a href="#3-创建一个公开项目" class="headerlink" title="3. 创建一个公开项目"></a>3. 创建一个公开项目</h4><div>
+    <img src="/images/init/image-20200404174341375.png"/>
+</div>
+
+<h4 id="4-提交代码到仓库"><a href="#4-提交代码到仓库" class="headerlink" title="4. 提交代码到仓库"></a>4. 提交代码到仓库</h4><p><strong>第一步 安装插件  hexo-deployer-git</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在项目的文件夹下面执行命令</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二部 修改配置文件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line"><span class="meta">  #</span><span class="bash"> repository github 项目地址</span></span><br><span class="line">  repository: https://github.com/***/****.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步 打包提交文件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo g // 生成编译后的文件</span><br><span class="line">hexo d // 提交编译后的文件到仓库</span><br><span class="line">// 或</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+
 
         </div>
 
