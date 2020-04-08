@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Java NIO 三件套 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Java NIO 三件套</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 6, 2020&nbsp;&nbsp;15:06:12</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<p>Java NIO 中有几个核心对象需要掌握：缓冲区（Buffer）、选择器（Selector）、通道（Channel）。</p>
+</blockquote>
+<h2 id="1-缓冲区-Buffer"><a href="#1-缓冲区-Buffer" class="headerlink" title="1. 缓冲区 Buffer"></a>1. 缓冲区 Buffer</h2><h3 id="1-Buffer-操作基本-API"><a href="#1-Buffer-操作基本-API" class="headerlink" title="1. Buffer 操作基本 API"></a>1. Buffer 操作基本 API</h3><p>缓冲区实际上是一个容器对象，更直接的说，其实就是一个数组，在 NIO 库中，所有数据都是用缓冲区处理的。在读取数据时，它是直接读到缓冲区中的； 在写入数据时，它也是写入到缓冲区中的；任何时候访问 NIO 中的数据，都是将它放到缓冲区中。而在面向流 I/O 系统中，所有数据都是直接写入或者直接将数据读取到 Stream 对象中。 </p>
+<p>在 NIO 中，所有的缓冲区类型都继承于抽象类 Buffer，最常用的就是 ByteBuffer，对于 Java 中的基本类型，基本都有 一个具体 Buffer 类型与之相对应，它们之间的继承关系如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200406174939477.png"/>
+</div>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Buffer Test 模板</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 分配新的 int 缓冲区，参数为缓冲区容量</span></span><br><span class="line">    <span class="comment">// 新缓冲区的当前位置将为零，其界限(限制位置)将为其容量。它将具有一个底层实现数组，其数组偏移量将为零。</span></span><br><span class="line">    <span class="comment">// 创建 intbuffer 长度为 8</span></span><br><span class="line">    IntBuffer buffer = IntBuffer.allocate(<span class="number">8</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buffer.capacity(); i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span> * (i + <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 将给定整数写入此缓冲区的当前位置，当前位置递增</span></span><br><span class="line">        buffer.put(j);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 重设此缓冲区，将限制设置为当前位置，然后将当前位置设置为 0</span></span><br><span class="line">    buffer.flip();</span><br><span class="line">    <span class="comment">// 查看在当前位置和限制位置之间是否有元素</span></span><br><span class="line">    <span class="keyword">while</span> (buffer.hasRemaining()) &#123;</span><br><span class="line">        <span class="comment">// 读取此缓冲区当前位置的整数，然后当前位置递增</span></span><br><span class="line">        <span class="keyword">int</span> j = buffer.get();</span><br><span class="line">        System.out.print(j + <span class="string">" "</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-Buffer-的基本的原理"><a href="#2-Buffer-的基本的原理" class="headerlink" title="2. Buffer 的基本的原理"></a>2. Buffer 的基本的原理</h3><p>在谈到缓冲区时，我们说缓冲区对象本质上是一个数组，但它其实是一个特殊的数组，缓冲区对象内置了一些机制， 能够跟踪和记录缓冲区的状态变化情况，如果我们使用 get() 方法从缓冲区获取数据或者使用 put() 方法把数据写入缓冲 区，都会引起缓冲区状态的变化。</p>
+<blockquote>
+<p>在缓冲区中，最重要的属性有下面三个，它们一起合作完成对缓冲区内部状态的变化跟踪： </p>
+<ul>
+<li><p>position：指定下一个将要被写入或者读取的元素索引，它的值由 get()/put() 方法自动更新，在新创建一个 Buffer 对象 时，position 被初始化为 0。</p>
+</li>
+<li><p>limit：指定还有多少数据需要取出(在从缓冲区写入通道时)，或者还有多少空间可以放入数据(在从通道读入缓冲区时)。</p>
+</li>
+<li><p>capacity：指定了可以存储在缓冲区中的最大数据容量，实际上，它指定了底层数组的大小，或者至少是指定了准许我 们使用的底层数组的容量。 </p>
+</li>
+</ul>
+<p>以上三个属性值之间有一些相对大小的关系：0 &lt;= position &lt;= limit &lt;= capacity</p>
+</blockquote>
+<p>如果我们创建一个新的容量大小为 10 的 ByteBuffer 对象，在初始化的时候，position 设置为 0，limit 和 capacity 被设置为 10，在以后使用 ByteBuffer 对象过程中，capacity 的值不会再发生变化，而其它两个个将会随着使用而变化。 </p>
+<h3 id="3-Buffer-缓冲区的分配"><a href="#3-Buffer-缓冲区的分配" class="headerlink" title="3. Buffer 缓冲区的分配"></a>3. Buffer 缓冲区的分配</h3><p>创建一个缓冲区对象时，会调用静态方法 allocate() 来指定缓冲区的容量，其实调用 allocate() 相当于创建了一个指定大小的数组，并把它包装为缓冲区对象。或者我们也可以直接将一个现有的数组，包装为缓冲区对象，如下示例代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 分配指定大小的缓冲区</span></span><br><span class="line">    ByteBuffer buffer1 = ByteBuffer.allocate(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 包装一个现有的数组</span></span><br><span class="line">    <span class="keyword">byte</span> array[] = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">10</span>];</span><br><span class="line">    ByteBuffer buffer2 = ByteBuffer.wrap(array);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Buffer-缓冲区分片"><a href="#4-Buffer-缓冲区分片" class="headerlink" title="4. Buffer 缓冲区分片"></a>4. Buffer 缓冲区分片</h3><p>Buffer 除了可以分配或者包装一个缓冲区对象外，还可以根据现有的缓冲区对象来创建一个子缓冲区，即在现有缓冲区上切出一片来作为一个新的缓冲区，但现有的缓冲区与创建的子缓冲区在底层数组层面上是数据共享的。也就是说，子缓冲区相当于是现有缓冲区的一个视图窗口。调用 slice()方法可以创建一个子缓冲区，让我们通过例子来看一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(<span class="number">10</span>);</span><br><span class="line">    <span class="comment">// 缓冲区中的数据 0-9</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buffer.capacity(); i++) buffer.put((<span class="keyword">byte</span>)i);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建子缓冲区</span></span><br><span class="line">    buffer.position(<span class="number">3</span>);</span><br><span class="line">    buffer.limit(<span class="number">7</span>);</span><br><span class="line">    ByteBuffer slice = buffer.slice();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 改变子缓冲区的内容</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; slice.capacity(); i++) &#123;</span><br><span class="line">        <span class="keyword">byte</span> b = slice.get(i);</span><br><span class="line">        b += <span class="number">100</span>;</span><br><span class="line">        slice.put(i, b);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buffer.position( <span class="number">0</span> );</span><br><span class="line">    buffer.limit(buffer.capacity());</span><br><span class="line">    <span class="comment">// 查看在当前位置和限制位置之间是否有元素</span></span><br><span class="line">    <span class="keyword">while</span> (buffer.remaining() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 读取此缓冲区当前位置的整数，然后当前位置递增</span></span><br><span class="line">        <span class="keyword">int</span> j = buffer.get();</span><br><span class="line">        System.out.print(j + <span class="string">" "</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在该示例中，分配了一个容量大小为 10 的缓冲区，并在其中放入了数据 0-9，而在该缓冲区基础之上又创建了一个子缓冲区，并改变子缓冲区中的内容。从最后输出的结果来看，只有子缓冲区“可见的”那部分数据发生了变化，并且说明子缓冲区与原缓冲区是数据共享的，输出结果如下所示：</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">103</span> <span class="number">104</span> <span class="number">105</span> <span class="number">106</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Buffer-只读缓冲区"><a href="#5-Buffer-只读缓冲区" class="headerlink" title="5. Buffer 只读缓冲区"></a>5. Buffer 只读缓冲区</h3><p>只读缓冲区非常简单，可以读取它们，但是不能向它们写入数据。</p>
+<p>可以通过调用缓冲区的 asReadOnlyBuffer() 方法，将任何常规缓冲区转换为只读缓冲区，这个方法返回一个与原缓冲区完全相同的缓冲区，并与原缓冲区共享数据，只不过它是只读的。如果原缓冲区的内容发生了变化，只读缓冲区的内容也随之发生变化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(<span class="number">10</span>);</span><br><span class="line">    <span class="comment">// 缓冲区中的数据 0-9</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;buffer.capacity(); i++) buffer.put((<span class="keyword">byte</span>)i);</span><br><span class="line">    <span class="comment">// 创建只读缓冲区</span></span><br><span class="line">    ByteBuffer readonly = buffer.asReadOnlyBuffer();</span><br><span class="line">    readonly.flip();</span><br><span class="line">    <span class="keyword">while</span> (readonly.hasRemaining()) &#123;</span><br><span class="line">        System.out.println(<span class="string">"原来 =&gt; "</span> + readonly.get());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 改变原缓冲区的内容</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buffer.capacity(); i++) &#123;</span><br><span class="line">        <span class="keyword">byte</span> b = buffer.get(i);</span><br><span class="line">        b *= <span class="number">10</span>;</span><br><span class="line">        buffer.put(i, b);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 改变只读缓冲区的内容</span></span><br><span class="line"><span class="comment">//        for (int i = 0; i &lt; readonly.capacity(); i++) &#123;</span></span><br><span class="line"><span class="comment">//            byte b = readonly.get(i);</span></span><br><span class="line"><span class="comment">//            b -= 100;</span></span><br><span class="line"><span class="comment">//            readonly.put(i, b);</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line">    readonly.position(<span class="number">0</span>);</span><br><span class="line">    readonly.limit(buffer.capacity());</span><br><span class="line">    <span class="comment">// 只读缓冲区的内容也随之改变</span></span><br><span class="line">    <span class="keyword">while</span> (readonly.remaining() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">"现在 =&gt; "</span> + readonly.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果尝试修改只读缓冲区的内容，则会报 ReadOnlyBufferException 异常。只读缓冲区对于保护数据很有用。在将缓冲区传递给某个对象的方法时，无法知道这个方法是否会修改缓冲区中的数据。创建一个只读的缓冲区可以保证该缓冲区不会被修改。<strong>只可以把常规缓冲区转换为只读缓冲区，而不能将只读的缓冲区转换为可写的缓冲区</strong>。</p>
+<h3 id="6-Buffer-直接缓冲区"><a href="#6-Buffer-直接缓冲区" class="headerlink" title="6. Buffer 直接缓冲区"></a>6. Buffer 直接缓冲区</h3><p>直接缓冲区是为加快 I/O 速度，使用一种特殊方式为其分配内存的缓冲区。JDK 文档中的描述为：给定一个直接字节缓冲区，Java 虚拟机将尽最大努力直接对它执行本机 I/O 操作。也就是说，它会在每一次调用底层操作系统的本机 I/O 操作之前(或之后)，尝试避免将缓冲区的内容拷贝到一个中间缓冲区中或者从一个中间缓冲区中拷贝数据。要分配直接缓冲区，需要调用  allocateDirect() 方法，而不是 allocate() 方法，使用方式与普通缓冲区并无区别。</p>
+<p>如下面的拷贝文件示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//首先我们从磁盘上读取刚才我们写出的文件内容</span></span><br><span class="line">        String infile = <span class="string">"E://test.txt"</span>;</span><br><span class="line">        FileInputStream fin = <span class="keyword">new</span> FileInputStream( infile );</span><br><span class="line">        FileChannel fileInputChannel = fin.getChannel();</span><br><span class="line">        <span class="comment">// 把刚刚读取的内容写入到一个新的文件中</span></span><br><span class="line">        String outfile = <span class="string">"E://testCopy.txt"</span>;</span><br><span class="line">        FileOutputStream fout = <span class="keyword">new</span> FileOutputStream(outfile);</span><br><span class="line">        FileChannel fileOutputChannel = fout.getChannel();</span><br><span class="line">        <span class="comment">// 使用 allocateDirect，而不是 allocate</span></span><br><span class="line">        ByteBuffer buffer = ByteBuffer.allocateDirect(<span class="number">1024</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            buffer.clear();</span><br><span class="line">            <span class="keyword">if</span> (fileInputChannel.read(buffer) == -<span class="number">1</span>) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                buffer.flip();</span><br><span class="line">                fileOutputChannel.write(buffer);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-内存映射"><a href="#7-内存映射" class="headerlink" title="7. 内存映射"></a>7. 内存映射</h3><p>内存映射是一种读和写文件数据的方法，它可以比常规的基于流或者基于通道的 I/O 快的多。内存映射文件 I/O 是通过使文件中的数据出现为内存数组的内容来完成的，这其初听起来似乎不过就是将整个文件读到内存中，但是事实上并不是这样。一般来说，只有文件中实际读取或者写入的部分才会映射到内存中。</p>
+<p>如下面的示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(<span class="string">"E://test.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">        FileChannel fc = raf.getChannel();</span><br><span class="line">        <span class="comment">// 把缓冲区跟文件系统进行一个映射关联</span></span><br><span class="line">        <span class="comment">// 只要操作缓冲区里面的内容，文件内容也会跟着改变</span></span><br><span class="line">        MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, <span class="number">1024</span>);</span><br><span class="line">        mbb.put(<span class="number">0</span>, (<span class="keyword">byte</span>)<span class="number">97</span>);</span><br><span class="line">        mbb.put(<span class="number">1023</span>, (<span class="keyword">byte</span>)<span class="number">122</span>);</span><br><span class="line">        raf.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-选择器-Selector"><a href="#2-选择器-Selector" class="headerlink" title="2. 选择器 Selector"></a>2. 选择器 Selector</h2><p>传统的 Server/Client 模式会基于 TPR（Thread per Request），服务器会为每个客户端请求建立一个线程，由该线程单独负责处理 一个客户请求。这种模式带来的一个问题就是线程数量的剧增，大量的线程会增大服务器的开销。大多数的实现为了避免这个问题， 都采用了线程池模型，并设置线程池线程的最大数量，这又带来了新的问题，如果线程池中有 200 个线程，而有 200 个用户都在进行大文件下载，会导致第 201 个用户的请求无法及时处理，即便第 201 个用户只想请求一个几KB大小的页面。传统的 Server/Client 模式如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200406214747369.png"/>
+</div>
+
+<p>NIO 中非阻塞 I/O 采用了基于 Reactor 模式的工作方式，I/O 调用不会被阻塞，相反是注册感兴趣的特定 I/O 事件，如可读数据到达，新的套接字连接等等，在发生特定事件时，系统再通知我们。NIO 中实现非阻塞 I/O 的核心对象就是  Selector，Selector 就是注册各种 I/O 事件地方，而且当那些事件发生时，就是这个对象告诉我们所发生的事件，如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200406214949775.png"/>
+</div>
+
+<p>从图中可以看出，当有读或写等任何注册的事件发生时，可以从 Selector 中获得相应的 SelectionKey，同时从  SelectionKey 中可以找到发生的事件和该事件所发生的具体的 SelectableChannel，以获得客户端发送过来的数据。使用 NIO 中非阻塞 I/O 编写服务器处理程序，大体上可以分为下面三个步骤： </p>
+<ol>
+<li>向 Selector 对象注册感兴趣的事件。</li>
+<li>从 Selector 中获取感兴趣的事件。</li>
+<li>根据不同的事件进行相应的处理。 </li>
+</ol>
+<p>接下来我们用一个简单的示例来说明整个过程。首先是向 Selector 对象注册感兴趣的事件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 创建 Selector 对象</span></span><br><span class="line">        Selector selector = Selector.open();</span><br><span class="line">        <span class="comment">// 创建可选择通道，并配置为非阻塞模式</span></span><br><span class="line">        ServerSocketChannel server = ServerSocketChannel.open();</span><br><span class="line">        server.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">// 绑定通道到指定端口</span></span><br><span class="line">        ServerSocket socket = server.socket();</span><br><span class="line">        InetSocketAddress address = <span class="keyword">new</span> InetSocketAddress(<span class="number">8080</span>);</span><br><span class="line">        socket.bind(address);</span><br><span class="line">        <span class="comment">// 向 Selector 中注册感兴趣的事件</span></span><br><span class="line">        <span class="comment">// SelectionKey.OP_READ;</span></span><br><span class="line">        <span class="comment">// SelectionKey.OP_WRITE;</span></span><br><span class="line">        <span class="comment">// SelectionKey.OP_ACCEPT;</span></span><br><span class="line">        <span class="comment">// SelectionKey.OP_CONNECT;</span></span><br><span class="line">        server.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建了 ServerSocketChannel 对象，并调用 configureBlocking() 方法，配置为非阻塞模式，接下来的三行代码把该通道绑定到指定端口，最后向 Selector 中注册事件，此处指定的是参数是 OP_ACCEPT，即指定我们想要监听 accept 事件，也就是新的连接发生时所产生的事件，对于 ServerSocketChannel 通道来说，我们唯一可以指定的参数就 OP_ACCEPT。</p>
+<p> 从 Selector 中获取感兴趣的事件，即开始监听，进入内部循环：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 开始监听</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"listen on "</span> + port);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 该调用会阻塞，直到至少有一个事件发生</span></span><br><span class="line">            selector.select();</span><br><span class="line">            Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">            Iterator&lt;SelectionKey&gt; iter = keys.iterator();</span><br><span class="line">            <span class="keyword">while</span> (iter.hasNext()) &#123;</span><br><span class="line">                SelectionKey key = (SelectionKey) iter.next();</span><br><span class="line">                iter.remove();</span><br><span class="line">                process(key);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在非阻塞 I/O 中，内部循环模式基本都是遵循这种方式。首先调用 select() 方法，该方法会阻塞，直到至少有一个事件发生，然后 再使用 selectedKeys() 方法获取发生事件的 SelectionKey，再使用迭代器进行循环。最后一步就是根据不同的事件，编写相应的处理代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 具体的办业务的方法，姑娘们服务公子</span></span><br><span class="line"><span class="comment">// 每一次轮询就是调用一次 process 方法，而每一次调用，只能一件事</span></span><br><span class="line"><span class="comment">// 在同一时间点，只能干一件事情</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">//        key.isWritable(); // 是否 写入</span></span><br><span class="line">    <span class="comment">//        key.isReadable(); // 是否 读取</span></span><br><span class="line">    <span class="comment">//        key.isAcceptable(); // 是否 可接受</span></span><br><span class="line">    <span class="comment">//        key.isConnectable(); // 是否 连接</span></span><br><span class="line">    <span class="comment">//        key.isValid(); // 是否 有效</span></span><br><span class="line">    <span class="comment">// 针对每一种状态给一个反应</span></span><br><span class="line">    <span class="keyword">if</span> (key.isAcceptable()) &#123;</span><br><span class="line">        ServerSocketChannel server = (ServerSocketChannel) key.channel();</span><br><span class="line">        <span class="comment">// 这个方法体现非阻塞，不管你的数据是否准备好都会放回一个状态</span></span><br><span class="line">        SocketChannel channel = server.accept();</span><br><span class="line">        channel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">// 当数据准备就绪的时候，将状态改为可读</span></span><br><span class="line">        channel.register(selector, SelectionKey.OP_READ);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isReadable()) &#123;</span><br><span class="line">        SocketChannel channel = (SocketChannel) key.channel();</span><br><span class="line">        <span class="keyword">int</span> len = channel.read(byteBuffer);</span><br><span class="line">        <span class="keyword">if</span> (len &gt; <span class="number">0</span>) &#123; <span class="comment">// 没有考虑超出缓冲区大小的情况</span></span><br><span class="line">            <span class="comment">// 将缓存字节数组的指针设置为数组的开始序列即数组下标0</span></span><br><span class="line">            byteBuffer.flip();</span><br><span class="line">            String content = <span class="keyword">new</span> String(byteBuffer.array(), <span class="number">0</span>, len);</span><br><span class="line">            <span class="comment">// 修改状态</span></span><br><span class="line">            key = channel.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">            <span class="comment">// 添加附件</span></span><br><span class="line">            key.attach(content);</span><br><span class="line">            System.out.println(<span class="string">"读取的数据： "</span> + content);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isWritable()) &#123;</span><br><span class="line">        SocketChannel channel = (SocketChannel) key.channel();</span><br><span class="line">        String content = (String) key.attachment();</span><br><span class="line">        <span class="comment">// 修改状态</span></span><br><span class="line">        channel.register(selector, SelectionKey.OP_READ);</span><br><span class="line">        System.out.println(<span class="string">"输出的数据："</span> + content);</span><br><span class="line">        channel.write(ByteBuffer.wrap(content.getBytes(StandardCharsets.UTF_8)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此处分别判断是接受请求、读数据还是写事件，分别作不同的处理。在 Java1.4 之前的 I/O 系统中，提供的都是面向流的 I/O 系统，系统一次一个字节地处理数据，一个输入流产生一个字节的数据，一个输出流消费一个字节的数据，面向流的 I/O 速度非常慢，而在 Java 1.4 中推出了 NIO，这是一个面向块的 I/O 系统，系统以块的方式处理处理，每一个操作在 一步中产生或者消费一个数据库，按块处理要比按字节处理数据快的多。</p>
+<blockquote>
+<p>以上代码来源 Java IO 文章里面的额 NIO， Socket 服务端 / Socket 客户端 内容</p>
+</blockquote>
+<h2 id="3-通道-Channel"><a href="#3-通道-Channel" class="headerlink" title="3. 通道 Channel"></a>3. 通道 Channel</h2>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/06/NIO%20%E4%B8%89%E4%BB%B6%E5%A5%97/">http://lidashuang.com/2020/04/06/NIO%20%E4%B8%89%E4%BB%B6%E5%A5%97/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/06/Web%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/">Web 跨域问题</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/Java-Netty/">Java Netty</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
