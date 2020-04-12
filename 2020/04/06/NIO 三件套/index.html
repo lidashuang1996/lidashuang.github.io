@@ -218,6 +218,42 @@
 <p>以上三个属性值之间有一些相对大小的关系：0 &lt;= position &lt;= limit &lt;= capacity</p>
 </blockquote>
 <p>如果我们创建一个新的容量大小为 10 的 ByteBuffer 对象，在初始化的时候，position 设置为 0，limit 和 capacity 被设置为 10，在以后使用 ByteBuffer 对象过程中，capacity 的值不会再发生变化，而其它两个个将会随着使用而变化。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// E://test.txt</span></span><br><span class="line"><span class="comment">// TEST</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 缓存去读取文件数据</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">//这用用的是文件 IO 处理</span></span><br><span class="line">    FileInputStream fin = <span class="keyword">new</span> FileInputStream(<span class="string">"E://test.txt"</span>);</span><br><span class="line">    <span class="comment">//创建文件的操作管道</span></span><br><span class="line">    FileChannel fc = fin.getChannel();</span><br><span class="line">    <span class="comment">//分配一个 10 个大小缓冲区，说白了就是分配一个 10 个大小的 byte 数组</span></span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(<span class="number">10</span>);</span><br><span class="line">    output(<span class="string">"初始化"</span>, buffer);</span><br><span class="line">    <span class="comment">// 先读一下</span></span><br><span class="line">    fc.read(buffer);</span><br><span class="line">    output(<span class="string">"调用 read()"</span>, buffer);</span><br><span class="line">    <span class="comment">// 准备操作之前，先锁定操作范围</span></span><br><span class="line">    buffer.flip();</span><br><span class="line">    output(<span class="string">"调用 flip()"</span>, buffer);</span><br><span class="line">    <span class="comment">// 判断有没有可读数据</span></span><br><span class="line">    <span class="keyword">while</span> (buffer.remaining() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">byte</span> b = buffer.get();</span><br><span class="line">        System.out.print(((<span class="keyword">char</span>)b));</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println();</span><br><span class="line">    output(<span class="string">"调用 get()"</span>, buffer);</span><br><span class="line">    <span class="comment">// 可以理解为解锁</span></span><br><span class="line">    buffer.clear();</span><br><span class="line">    output(<span class="string">"调用 clear()"</span>, buffer);</span><br><span class="line">    <span class="comment">// 最后把管道关闭</span></span><br><span class="line">    fin.close();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//把这个缓冲里面实时状态给答应出来</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">output</span><span class="params">(String step, Buffer buffer)</span> </span>&#123;</span><br><span class="line">    System.out.println(step + <span class="string">" : "</span>);</span><br><span class="line">    <span class="comment">//容量，数组大小</span></span><br><span class="line">    System.out.print(<span class="string">"capacity: "</span> + buffer.capacity() + <span class="string">", "</span>);</span><br><span class="line">    <span class="comment">//当前操作数据所在的位置，也可以叫做游标</span></span><br><span class="line">    System.out.print(<span class="string">"position: "</span> + buffer.position() + <span class="string">", "</span>);</span><br><span class="line">    <span class="comment">//锁定值，flip，数据操作范围索引只能在 position - limit 之间</span></span><br><span class="line">    System.out.println(<span class="string">"limit: "</span> + buffer.limit());</span><br><span class="line">    System.out.println();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">初始化 : </span><br><span class="line">capacity: <span class="number">10</span>, position: <span class="number">0</span>, limit: <span class="number">10</span></span><br><span class="line"></span><br><span class="line">调用 read() : </span><br><span class="line">capacity: <span class="number">10</span>, position: <span class="number">4</span>, limit: <span class="number">10</span></span><br><span class="line"></span><br><span class="line">调用 flip() : </span><br><span class="line">capacity: <span class="number">10</span>, position: <span class="number">0</span>, limit: <span class="number">4</span></span><br><span class="line"></span><br><span class="line">TEST</span><br><span class="line">调用 get() : </span><br><span class="line">capacity: <span class="number">10</span>, position: <span class="number">4</span>, limit: <span class="number">4</span></span><br><span class="line"></span><br><span class="line">调用 clear() : </span><br><span class="line">capacity: <span class="number">10</span>, position: <span class="number">0</span>, limit: <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p>创建初始化 ByteBuffer 的状态：</p>
+<div>
+    <img src="/images/java_io/image-20200408223805277.png"/>
+</div>
+
+<p>我们可以从通道中读取一些数据到缓冲区中，注意从通道读取数据，相当于往缓冲区中写入数据。如果读取 4 个自己的数据，则此时 position 的值为 4，即下一个将要被写入的字节索引为 4，而 limit 仍然是 10，如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200408224018320.png"/>
+</div>
+
+<p>下一步把读取的数据写入到输出通道中，相当于从缓冲区中读取数据，在此之前，必须调用 flip() 方法，该方法将会完成两件事情：</p>
+<ol>
+<li><p>把 limit 设置为当前的 position 值</p>
+</li>
+<li><p>把 position 设置为 0</p>
+</li>
+</ol>
+<p>由于 position 被设置为 0，所以可以保证在下一步输出时读取到的是缓冲区中的第一个字节，而 limit 被设置为当前的 position，可以保证读取的数据正好是之前写入到缓冲区中的数据，如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200408224323994.png"/>
+</div>
+
+<p>现在调用 get() 方法从缓冲区中读取数据写入到输出通道，这会导致 position 的增加而 limit 保持不变，但 position 不会超过 limit 的值，所以在读取我们之前写入到缓冲区中的 4 个自己之后，position 和 limit 的值都为 4，如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200408224619224.png"/>
+</div>
+
+<p>在从缓冲区中读取数据完毕后，limit 的值仍然保持在我们调用 flip()方法时的值，调用 clear()方法能够把所有的状态变化设置为初始化时的值，如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200408224528936.png"/>
+</div>
+
 <h3 id="3-Buffer-缓冲区的分配"><a href="#3-Buffer-缓冲区的分配" class="headerlink" title="3. Buffer 缓冲区的分配"></a>3. Buffer 缓冲区的分配</h3><p>创建一个缓冲区对象时，会调用静态方法 allocate() 来指定缓冲区的容量，其实调用 allocate() 相当于创建了一个指定大小的数组，并把它包装为缓冲区对象。或者我们也可以直接将一个现有的数组，包装为缓冲区对象，如下示例代码所示：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 分配指定大小的缓冲区</span></span><br><span class="line">    ByteBuffer buffer1 = ByteBuffer.allocate(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 包装一个现有的数组</span></span><br><span class="line">    <span class="keyword">byte</span> array[] = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">10</span>];</span><br><span class="line">    ByteBuffer buffer2 = ByteBuffer.wrap(array);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -270,7 +306,150 @@
 <blockquote>
 <p>以上代码来源 Java IO 文章里面的额 NIO， Socket 服务端 / Socket 客户端 内容</p>
 </blockquote>
-<h2 id="3-通道-Channel"><a href="#3-通道-Channel" class="headerlink" title="3. 通道 Channel"></a>3. 通道 Channel</h2>
+<h2 id="3-通道-Channe"><a href="#3-通道-Channe" class="headerlink" title="3. 通道 Channe"></a>3. 通道 Channe</h2><p>通道是一个对象，通过它可以读取和写入数据，当然了所有数据都通过 Buffer 对象来处理。我们永远不会将字节直接写入通道中，相反是将数据写入包含一个或者多个字节的缓冲区。同样不会直接从通道中读取字节，而是将数据从通 道读入缓冲区，再从缓冲区获取这个字节。</p>
+<p>在 NIO 中，提供了多种通道对象，而所有的通道对象都实现了 Channel 接口。它们之间的继承关系如下图所示：</p>
+<div>
+    <img src="/images/java_io/image-20200412154943555.png"/>
+</div>
+
+<h3 id="1-使用-NIO-读取数据"><a href="#1-使用-NIO-读取数据" class="headerlink" title="1.使用 NIO 读取数据"></a>1.使用 NIO 读取数据</h3><p>在前面我们说过，任何时候读取数据，都不是直接从通道读取，而是从通道读取到缓冲区。所以使用 NIO 读取数据可 以分为下面三个步骤：</p>
+<ol>
+<li>从 FileInputStream 获取 Channel</li>
+<li>创建 Buffer</li>
+<li>将数据从 Channel 读取到 Buffer 中</li>
+</ol>
+<h3 id="2-使用-NIO-写入数据"><a href="#2-使用-NIO-写入数据" class="headerlink" title="2. 使用 NIO 写入数据"></a>2. 使用 NIO 写入数据</h3><p>使用 NIO 写入数据与读取数据的过程类似，同样数据不是直接写入通道，而是写入缓冲区，可以分为下面三个步骤： </p>
+<ol>
+<li>从 FileInputStream 获取 Channel</li>
+<li>创建 Buffer</li>
+<li>将数据从 Channel 写入到 Buffer 中</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FileInputStream fin = <span class="keyword">new</span> FileInputStream(<span class="string">"E://test.txt"</span>);</span><br><span class="line">    <span class="comment">// 获取通道</span></span><br><span class="line">    FileChannel fc = fin.getChannel();</span><br><span class="line">    <span class="comment">// 创建缓冲区</span></span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="comment">// 读取数据到缓冲区</span></span><br><span class="line">    fc.read(buffer);</span><br><span class="line">    <span class="comment">// 从零开始读取缓冲区内容</span></span><br><span class="line">    buffer.flip();</span><br><span class="line">    <span class="keyword">while</span> (buffer.remaining() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">byte</span> b = buffer.get();</span><br><span class="line">        System.out.print(((<span class="keyword">char</span>)b));</span><br><span class="line">    &#125;</span><br><span class="line">    fin.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是一个简单的使用 NIO 向文件中写入数据的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] message = <span class="keyword">new</span> <span class="keyword">byte</span>[]&#123;<span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>, <span class="number">65</span>&#125;;</span><br><span class="line">    FileOutputStream fOut = <span class="keyword">new</span> FileOutputStream( <span class="string">"E://test_w.txt"</span> );</span><br><span class="line">    FileChannel fc = fOut.getChannel();</span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">byte</span> b : message) buffer.put(b);</span><br><span class="line">    buffer.flip();</span><br><span class="line">    fc.write(buffer);</span><br><span class="line">    fOut.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-IO-多路复用"><a href="#3-IO-多路复用" class="headerlink" title="3. IO 多路复用"></a>3. IO 多路复用</h3><p>我们试想一下这样的现实场景： </p>
+<p>一个餐厅同时有 100 位客人到店，当然到店后第一件要做的事情就是点菜。但是问题来了，餐厅老板为了节约人 力成本目前只有一位大堂服务员拿着唯一的一本菜单等待客人进行服务。 那么最笨（但是最简单）的方法是（方法 A），无论有多少客人等待点餐，服务员都把仅有的一份菜单递给其中 一位客人，然后站在客人身旁等待这个客人完成点菜过程。在记录客人点菜内容后，把点菜记录交给后堂厨师。然后是第二位客人。然后是第三位客人。依次下去。很明显，只有脑袋被门夹过的老板，才会这样设置服务流程。因为随后的 80 位客人，再等待超时后就会离店（还会给差评）。 于是还有一种办法（方法 B），老板马上新雇佣 99 名服务员，同时印制 99 本新的菜单。每一名服务员手持一本菜单负责一位客人（关键不只在于服务员，还在于菜单。因为没有菜单客人也无法点菜）。在客人点完菜后，记录点菜内容交给后堂厨师（当然为了更高效，后堂厨师最好也有 100 名）。这样每一位客人享受的就是 VIP 服务咯，当然客人不会走，但是人力成本可是一个大头哦（亏死你）。</p>
+<div>
+    <img src="/images/java_io/image-20200412160555368.png"/>
+</div>
+
+<p>另外一种办法（方法 C），就是改进点菜的方式，当客人到店后，自己申请一本菜单。想好自己要点的才后，就呼叫服务员。服务员站在自己身边后记录客人的菜单内容。将菜单递给厨师的过程也要进行改进，并不是每一份菜单记录好以后，都要交给后堂厨师。服务员可以记录号多份菜单后，同时交给厨师就行了。那么这种方式，对于老板来说人力成本是最低的；对于客人来说，虽然不再享受 VIP 服务并且要进行一定的等待，但是这些都是可接受的；对于服务员来说，基本上她的时间都没有浪费，基本上被老板压榨了最后一滴油水。</p>
+<div>
+    <img src="/images/java_io/image-20200412160931947.png"/>
+</div>
+
+<p>如果您是老板，您会采用哪种方式呢？ </p>
+<p>到店情况：并发量。到店情况不理想时，一个服务员一本菜单，当然是足够了。所以不同的老板在不同的场合下， 将会灵活选择服务员和菜单的配置。 </p>
+<p><strong>客人：</strong>客户端请求</p>
+<p><strong>点餐内容：</strong>客户端发送的实际数据</p>
+<p><strong>老板：</strong>操作系统</p>
+<p><strong>人力成本：</strong>系统资源</p>
+<p><strong>菜单：</strong>文件状态描述符（FD）</p>
+<p>操作系统对于一个进程能够同时持有的文件状态描述符的个数是有限制的，在 linux 系统中 $ulimit -n 查看这个限制值，当然也是可以（并且应该）进行内核参数调整的。</p>
+<p>服务员：操作系统内核用于 IO 操作的线程（内核线程）</p>
+<p>厨师：应用程序线程（当然厨房就是应用程序进程咯） </p>
+<p>方法 A：同步 IO </p>
+<p>方法 B：同步 IO </p>
+<p>方法 C：多路复用 IO </p>
+<p>目前流行的多路复用 IO 实现主要包括四种：select、poll、epoll、kqueue。下表是他们的一些重要特性的比较：</p>
+<table>
+<thead>
+<tr>
+<th>IO模型</th>
+<th>相对性能</th>
+<th>关键思路</th>
+<th>操作系统</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select</td>
+<td>较高</td>
+<td>windows/Linux</td>
+<td>支持,Reactor 模式(反应器设计模式)。Linux 操作系统的 kernels 2.4 内核版本之前，默认使用 select；而目前 windows 下对同步 IO 的支持，都是 select 模型。</td>
+</tr>
+<tr>
+<td>poll</td>
+<td>较高</td>
+<td>Linux</td>
+<td>Linux 下的 JAVA NIO 框架，Linux kernels 2.6 内 核版本之前使用 poll 进行支持。也是使用的 Reactor 模式。</td>
+</tr>
+<tr>
+<td>epoll</td>
+<td>高</td>
+<td>Linux</td>
+<td>Linux kernels 2.6 内核版本及以后使用 epoll 进行支持；Linux kernels 2.6 内核版本之前使用 poll 进行支持；另外一定注意，由于 Linux 下没有 Windows 下的 IOCP 技术提供真正的异步 IO 支 持，所以 Linux 下使用 epoll 模拟异步 IO。</td>
+</tr>
+<tr>
+<td>kqueue</td>
+<td>高</td>
+<td>Linux</td>
+<td>目前 JAVA 的版本不支持。</td>
+</tr>
+</tbody></table>
+<p>多路复用 IO 技术最适用的是“高并发”场景，所谓高并发是指 1 毫秒内至少同时有上千个连接请求准备好。其他情况下多路复用 IO 技术发挥不出来它的优势。另一方面，使用 JAVA NIO 进行功能实现，相对于传统的 Socket 套接字实现要复杂一些，所以实际应用中，需要根据自己的业务需求进行技术选择。</p>
+<blockquote>
+<p><a href="[https://wenchao.ren/2019/07/Select%E3%80%81Epoll%E3%80%81KQueue%E5%8C%BA%E5%88%AB/](https://wenchao.ren/2019/07/Select、Epoll、KQueue区别/)">select、poll、epoll、kqueue 区别</a></p>
+<ul>
+<li>只有 IOCP 是 asynchronous I/O，其他机制或多或少都会有一点阻塞。</li>
+<li>select 低效是因为每次它都需要轮询。但低效也是相对的，视情况而定，也可通过良好的设计改善</li>
+<li>epoll, kqueue 是 Reacor 模式，IOCP是 Proactor模式。</li>
+<li>java nio包是select模型</li>
+</ul>
+</blockquote>
+<h2 id="4-反应堆-Reactor"><a href="#4-反应堆-Reactor" class="headerlink" title="4. 反应堆 Reactor"></a>4. 反应堆 Reactor</h2><p>现在我们已经对阻塞 I/O 已有了一定了解，我们知道阻塞 I/O 在调用 InputStream.read() 方法时是阻塞的，它会一直等到数据到来时（或超时）才会返回；同样，在调用 ServerSocket.accept() 方法时，也会一直阻塞到有客户端连接才会 返回，每个客户端连接过来后，服务端都会启动一个线程去处理该客户端的请求。阻塞 I/O 的通信模型示意图如下：</p>
+<div>
+    <img src="/images/java_io/image-20200412222515854.png"/>
+</div>
+
+<p>如果你细细分析，一定会发现阻塞 I/O 存在一些缺点。根据阻塞 I/O 通信模型，我总结了它的两点缺点：</p>
+<ol>
+<li>当客户端多时，会创建大量的处理线程。且每个线程都要占用栈空间和一些 CPU 时间。</li>
+<li>阻塞可能带来频繁的上下文切换，且大部分上下文切换可能是无意义的。在这种情况下非阻塞式 I/O 就有了它的应用前景。 </li>
+</ol>
+<p>Java NIO 是在 jdk1.4 开始使用的，它既可以说成“新 I/O”，也可以说成非阻塞式 I/O。下面是 Java NIO 的工作原理： </p>
+<ol>
+<li>由一个专门的线程来处理所有的 IO 事件，并负责分发。 </li>
+<li>事件驱动机制：事件到的时候触发，而不是同步的去监视事件。 </li>
+<li>线程通讯：线程之间通过 wait, notify 等方式通讯。保证每次上下文切换都是有意义的。减少无谓的线程切换。 </li>
+</ol>
+<p>下面贴出我理解的 Java NIO 反应堆的工作原理图：</p>
+<div>
+    <img src="/images/java_io/image-20200412222444925.png"/>
+</div>
+
+<p><strong>（注：每个线程的处理流程大概都是读取数据、解码、计算处理、编码、发送响应。）</strong></p>
+<h2 id="5-Netty-与-NIO"><a href="#5-Netty-与-NIO" class="headerlink" title="5. Netty 与 NIO"></a>5. Netty 与 NIO</h2><p>Netty 支持的功能与特性按照定义来说，Netty 是一个异步、事件驱动的用来做高性能、高可靠性的网络应用框架。主要的优点有： </p>
+<ol>
+<li>框架设计优雅，底层模型随意切换适应不同的网络协议要求。</li>
+<li>提供很多标准的协议、安全、编码解码的支持。</li>
+<li>解决了很多 NIO 不易用的问题。</li>
+<li>社区更为活跃，在很多开源框架中使用，如 Dubbo、RocketMQ、Spark 等。</li>
+</ol>
+<div>
+    <img src="/images/java_io/image-20200412222323245.png"/>
+</div>
+
+<p>上图体现的主要是 Netty 支持的功能或者特性： </p>
+<ol>
+<li>底层核心有：Zero-Copy-Capable Buffer，非常易用的灵拷贝 Buffer（这个内容很有意思，稍后专门来说）；统一的 API；标准可扩展的时间模型 </li>
+<li>传输方面的支持有：管道通信（具体不知道干啥的，还请老司机指教）；Http 隧道；TCP 与 UDP </li>
+<li>协议方面的支持有：基于原始文本和二进制的协议；解压缩；大文件传输；流媒体传输；protobuf 编解码；安全认 证；http 和 websocket</li>
+</ol>
+<h4 id="Netty-采用-NIO-而非-AIO-的理由"><a href="#Netty-采用-NIO-而非-AIO-的理由" class="headerlink" title="Netty 采用 NIO 而非 AIO 的理由"></a>Netty 采用 NIO 而非 AIO 的理由</h4><ol>
+<li>Netty 不看重 Windows 上的使用，在 Linux 系统上，AIO 的底层实现仍使用 EPOLL，没有很好实现 AIO，因此在性 能上没有明显的优势，而且被 JDK 封装了一层不容易深度优化</li>
+<li>Netty 整体架构是 reactor 模型, 而 AIO 是 proactor 模型, 混合在一起会非常混乱,把 AIO 也改造成 reactor 模型看起来是把 epoll 绕个弯又绕回来</li>
+<li>AIO 还有个缺点是接收数据需要预先分配缓存, 而不是 NIO 那种需要接收时才需要分配缓存, 所以对连接数量非常大 但流量小的情况, 内存浪费很多 </li>
+<li>Linux 上 AIO 不够成熟，处理回调结果速度跟不到处理需求，比如外卖员太少，顾客太多，供不应求，造成处理速度 有瓶颈（待验证）</li>
+</ol>
+<h2 id="6-文档"><a href="#6-文档" class="headerlink" title="6. 文档"></a>6. 文档</h2><blockquote>
+<p><a href="[https://wenchao.ren/2019/07/Select%E3%80%81Epoll%E3%80%81KQueue%E5%8C%BA%E5%88%AB/](https://wenchao.ren/2019/07/Select、Epoll、KQueue区别/)">select、poll、epoll、kqueue 区别</a></p>
+<p><a href="https://netty.io/" target="_blank" rel="noopener">Netty</a></p>
+</blockquote>
+
         </div>
 
         
