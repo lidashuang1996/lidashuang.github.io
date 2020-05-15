@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>RabbitMQ | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">RabbitMQ</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 27, 2020&nbsp;&nbsp;23:10:28</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h1><h2 id="1-消息队列简介"><a href="#1-消息队列简介" class="headerlink" title="1. 消息队列简介"></a>1. 消息队列简介</h2><h3 id="1-RabbitMQ-的诞生历程"><a href="#1-RabbitMQ-的诞生历程" class="headerlink" title="1. RabbitMQ 的诞生历程"></a>1. RabbitMQ 的诞生历程</h3><p>我们要去用 MQ，先来了解一下 MQ 是怎么诞生的，这样对于它解决了什么问题理 解会更加深刻。大家知不知道世界上第一个 MQ 叫什么名字，是什么时候诞生的？ </p>
+<p>1983 年的时候，有个在 MIT 工作的印度小伙突发奇想，以前我们的软件相互通信， 都是点对点的，而且要实现相同的协议，能不能有一种专门用来通信的中间件，就像主板（BUS）一样，把不同的软件集成起来呢？于是他搞了一家公司（Teknekron），开发 了世界上第一个消息队列软件 The Information Bus(TIB)。最开始的时候，它被高盛这些公司用在金融交易里面。因为 TIB 实现了发布订阅(Publish/Subscribe)模型，信息的生产者和消费者可以完全解耦，这个特性引起了电信行业特别是新闻机构的注意。1994 年路透社收购了 Teknekron。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200501224416492.png" alt="image-20200501224416492"></p>
+<p>TIB 的成功马上引起了业界大佬 IBM 的注意，他们研发了自己的 IBM MQ（IBM Wesphere）。后面微软也加入了这场战斗，研发了 MSMQ。这个时候，每个厂商的产 品是孤立的，大家都有自己的技术壁垒。比如一个应用订阅了 IBM MQ 的消息，如果有要订阅 MSMQ 的消息，因为协议、API 不同，又要重复去实现。为什么大家都不愿意去创建标准接口，来实现不同的 MQ 产品的互通呢？跟现在微信里面不能打开淘宝页面是 一个道理（商业竞争）。</p>
+<p>JDBC 协议大家非常熟悉吧？J2EE 制定了 JDBC 的规范，那么那么各个数据库厂商 自己去实现协议，提供 jar 包，在 Java 里面就可以使用相同的 API 做操作不同的数据库 了。MQ 产品的问题也是一样的，2001 年的时候，SUN 公司发布了 JMS 规范，它想要 在各大厂商的 MQ 上面统一包装一层 Java 的规范，大家都只需要针对 API 编程就可以了， 不需要关注使用了什么样的消息中间件，只要选择合适的 MQ 驱动。但是 JMS 只适用于 Java 语言，它是跟语言绑定的，没有从根本上解决这个问题（只是一个 API）。</p>
+<p>所以在 06 年的时候，AMQP 规范发布了。它是跨语言和跨平台的，真正地促进了 消息队列的繁荣发展。</p>
+<p>07 年的时候，Rabbit 技术公司基于 AMQP 开发了 RabbitMQ 1.0。为什么要用 Erlang 语言呢？因为 Erlang 是作者 Matthias 擅长的开发语言。第二个就是 Erlang 是为 电话交换机编写的语言，天生适合分布式和高并发</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200501224616490.png" alt="image-20200501224616490"></p>
+<p>为什么要取 Rabbit Technologies 这个名字呢？因为兔子跑得很快，而且繁殖起来 很疯狂。</p>
+<p>从最开始用在金融行业里面，现在 RabbitMQ 已经在世界各地的公司中遍地开花。 国内的绝大部分大厂都在用 RabbitMQ，包括头条，美团，滴滴（TMD），去哪儿，艺 龙，淘宝也有用。</p>
+<h3 id="2-什么是-MQ（Message-Queue）？"><a href="#2-什么是-MQ（Message-Queue）？" class="headerlink" title="2. 什么是 MQ（Message Queue）？"></a>2. 什么是 MQ（Message Queue）？</h3><p>MQ 的本质是什么呢？</p>
+<p>消息队列，又叫做消息中间件。是指用高效可靠的消息传递机制进行与平台无关的 数据交流，并基于数据通信来进行分布式系统的集成。通过提供消息传递和消息队列模 型，可以在分布式环境下扩展进程的通信（维基百科）。</p>
+<p>基于以上的描述（MQ 是用来解决通信的问题），我们知道，MQ 的几个主要特点：</p>
+<ol>
+<li><p>是一个独立运行的服务。生产者发送消息，消费者接收消费，需要先跟服务器建立连接</p>
+</li>
+<li><p>采用队列作为数据结构，有先进先出的特点</p>
+</li>
+<li><p>具有发布订阅的模型，消费者可以获取自己需要的消息</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200501224741540.png" alt="image-20200501224741540"></p>
+</li>
+</ol>
+<p>我们可以把 RabbitMQ 类比成邮局和邮差，它是用来帮我们存储和转发消息的。</p>
+<p>问题：如果仅仅是解决消息消费的问题，Java 里面有这么多的队列的实现，为什么 不用他们呢？这个问题的答案，就跟有了 HashMap 之后，为什么还要 Redis 做缓存是 一样的。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200501224815324.png" alt="image-20200501224815324"></p>
+<p>Queue 不能跨进程，不能在分布式系统中使用，并且没有持久化机制等等。</p>
+<h3 id="3-为什么要使用-MQ？"><a href="#3-为什么要使用-MQ？" class="headerlink" title="3. 为什么要使用 MQ？"></a>3. 为什么要使用 MQ？</h3><p>我们已经知道 MQ 是什么了，那在什么地方可以用 MQ，或者说，为什么要使用 MQ 呢?这是一个很常见的面试题，如果你在项目里面用了 MQ，还不知道这个问题的答 案，说明你自己从来没有思考总结过，因为这个项目是别人架构设计的，你可能只是做 了些维护的工作。有一天让你自己去做项目架构的时候，你搞一个 MQ 进去，理由就是 以前的项目也是这么干的，这是很危险的。</p>
+<h3 id="4-实现异步通信"><a href="#4-实现异步通信" class="headerlink" title="4. 实现异步通信"></a>4. 实现异步通信</h3><p>同步的通信是什么样的？ </p>
+<p>发出一个调用请求之后，在没有得到结果之前，就不返回。由调用者主动等待这个调用的结果。 </p>
+<p>而异步是相反的，调用在发出之后，这个调用就直接返回了，所以没有返回结果。 也就是说，当一个异步过程调用发出后，调用者不会马上得到结果。而是在调用发出后， 被调用者通过状态、通知来通知调用者，或通过回调函数处理这个调用。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200503213841442.png" alt="image-20200503213841442"></p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200503213854556.png" alt="image-20200503213854556"></p>
+<p>举个例子： </p>
+<p>大家都用过手机银行的跨行转账功能。大家用 APP 的转账功能的时候，有一个实时模式，有一个非实时模式。</p>
+<p>实时转账实际上是异步通信，因为这个里面涉及的机构比较多，调用链路比较长， 本行做了一些列的处理之后，转发给银联或者人民银行的支付系统，再转发给接收行， 接受行处理以后再原路返回。 </p>
+<p>所以转账以后会有一行小字提示：具体到账时间以对方行处理为准，也就是说转出行只保证了这个转账的消息发出。那为什么到账时间又这么快呢？很多时候我们转账之后，不用几秒钟对方就收到了。是因为大部分的 MQ 都有一个低延迟的特性，能在短时间内处理非常多的消息。 </p>
+<p>很多理财软件提现也是一样，先提交请求，到账时间不定。这个是用 MQ 实现系统间异步通信的一个场景。</p>
+<h3 id="5-实现系统解耦"><a href="#5-实现系统解耦" class="headerlink" title="5. 实现系统解耦"></a>5. 实现系统解耦</h3><p>第二个主要的功能，是用来实现系统解耦。既然说到解耦，那我们要先来了解一下 耦合的概念。</p>
+<p>耦合是系统内部或者系统之间存在相互作用，相互影响和相互依赖。</p>
+<p>在我们的分布式系统中，一个业务流程涉及多个系统的时候，他们之间就会形成一 个依赖关系。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200503230559848.png" alt="image-20200503230559848"></p>
+<p>比如我们以 12306 网站退票为例，在传统的通信方式中，订单系统发生了退货的动作，那么要依次调用所有下游系统的 API，比如调用库存系统的 API 恢复库存，因为这张火车票还要释放出去给其他乘客购买；调用支付系统的 API，不论是支付宝微信还是银行卡，要把手续费扣掉以后，原路退回给消费者；调用通知系统 API 通知用户退货成功。</p>
+<p>这个过程是串行执行的，如果在恢复库存的时候发生了异常，那么后面的代码都不 会执行。由于这一系列的动作，恢复库存，资金退还，发送通知，本质上没有一个严格的先后顺序，也没有直接的依赖关系，也就是说，只要用户提交了退货的请求，后面的这些动作都是要完成的。库存有没有恢复成功，不影响资金的退还和发送通知。</p>
+<p>如果把串行改成并行，我们有什么思路？</p>
+<p>（多线程） 多线程或者线程池是可以实现的，但是每一个需要并行执行的地方都引入线程，又会带来线程或者线程池的管理问题。</p>
+<p>所以，这种情况下，我们可以引入 MQ 实现系统之间依赖关系的解耦合。</p>
+<p>引入 MQ 以后：</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200503230928842.png" alt="image-20200503230928842"></p>
+<p>订单系统只需要把退货的消息发送到消息队列上，由各个下游的业务系统自己创建队列，然后监听队列消费消息。</p>
+<p>在这种情况下订单系统里面就不需要配置其他系统的 IP、端口、接口地址了，因为它不需要关心消费者在网络上的什么位置，所以下游系统改 IP 没有任何影响。甚至不需 要关心消费者有没有消费成功，它只需要把消费发到消息队列的服务器上就可以了。</p>
+<p>这样，我们就实现了系统之间依赖关系的解耦。</p>
+<h3 id="7-实现流量削峰"><a href="#7-实现流量削峰" class="headerlink" title="7. 实现流量削峰"></a>7. 实现流量削峰</h3><p>第三个主要功能，是实现流量削峰。</p>
+<p>在很多的电商系统里面，有一个瞬间流量达到峰值的情况，比如京东的 618，淘宝 的双 11，还有小米抢购。普通的硬件服务器肯定支撑不了这种百万或者千万级别的并发 量，就像 2012 年的小米一样，动不动服务器就崩溃。</p>
+<p>如果通过堆硬件的方式去解决，那么在流量峰值过去以后就会出现巨大的资源浪费。 那要怎么办呢？如果说要保护我们的应用服务器和数据库，限流也是可以的，但是这样 又会导致订单的丢失，没有达到我们的目的。</p>
+<p>为了解决这个问题，我们就可以引入 MQ，MQ 既然是队列，一定有队列的特性， 我们知道队列的特性是什么？</p>
+<p>（先进先出 FIFO） 这样，我们就可以先把所有的流量承接下来，转换成 MQ 消息发送到消息队列服务 器上，业务层就可以根据自己的消费速率去处理这些消息，处理之后再返回结果。就像 我们在火车站排队一样，大家只能一个一个买票，不会因为人多就导致售票员忙不过来。 如果要处理快一点，大不了多开几个窗口（增加几个消费者）。 这个是我们利用 MQ 实现流量削峰的一个案例。 如果大家的公司里面有用到 MQ 的话，也可以对号入座看看是起到了什么作用。 总结起来：</p>
+<ol>
+<li>对于数据量大或者处理耗时长的操作，我们可以引入 MQ 实现异步通信，减少客户端的等待，提升响应速度。</li>
+<li>对于改动影响大的系统之间，可以引入 MQ 实现解耦，减少系统之间的直接依赖。</li>
+<li>对于会出现瞬间的流量峰值的系统，我们可以引入 MQ 实现流量削峰，达到保护应用和数据库的目的。</li>
+</ol>
+<p>所以对于一些特定的业务场景，MQ 对于优化我们的系统还是有很大的帮助的，那么大家想一下，把传统的 RPC 通信改成 MQ 通信会不会带来一些问题呢？</p>
+<p>RPC 是同步的 ！</p>
+<p>MQ 推送过去，不能及时获取结果。</p>
+<h3 id="8-使用消息队列带来的一些问题"><a href="#8-使用消息队列带来的一些问题" class="headerlink" title="8. 使用消息队列带来的一些问题"></a>8. 使用消息队列带来的一些问题</h3><p>系统可用性降低：原来是两个节点的通信，现在还需要独立运行一个服务，如果 MQ 服务器或者通信网络出现问题，就会导致请求失败。 </p>
+<p>系统复杂性提高： 为什么说复杂？第一个就是你必须要理解相关的模型和概念，才能正确地配置和使用 MQ。第二个，使用 MQ 发送消息必须要考虑消息丢失和消息重复 消费的问题。一旦消息没有被正确地消费，就会带来数据一致性的问题。 </p>
+<p>所以，我们在做系统架构的时候一定要根据实际情况来分析，不要因为我们说了这 么多的 MQ 能解决的问题，就盲目地引入 MQ。</p>
+<h2 id="2-RabbitMQ-简介"><a href="#2-RabbitMQ-简介" class="headerlink" title="2. RabbitMQ 简介"></a>2. RabbitMQ 简介</h2><p>官网 <a href="https://www.rabbitmq.com/getstarted.html" target="_blank" rel="noopener">https://www.rabbitmq.com/getstarted.html</a> </p>
+<p>高可靠：RabbitMQ 提供了多种多样的特性让你在可靠性和性能之间做出权衡，包括持久化、发送应答、发布确认以及高可用性。</p>
+<p>灵活的路由：通过交换机（Exchange）实现消息的灵活路由。 </p>
+<p>支持多客户端：对主流开发语言（Python、Java、Ruby、PHP、C#、JavaScript、 Go、Elixir、Objective-C、Swift 等）都有客户端实现。 </p>
+<p>集群与扩展性：多个节点组成一个逻辑的服务器，支持负载。 </p>
+<p>高可用队列：通过镜像队列实现队列中数据的复制。 </p>
+<p>权限管理：通过用户与虚拟机实现权限管理。 </p>
+<p>插件系统：支持各种丰富的插件扩展，同时也支持自定义插件。 </p>
+<p>与 Spring 集成：Spring 对 AMQP 进行了封装</p>
+<h3 id="2-AMQP-协议"><a href="#2-AMQP-协议" class="headerlink" title="2. AMQP 协议"></a>2. AMQP 协议</h3><h4 id="1-总体介绍"><a href="#1-总体介绍" class="headerlink" title="1. 总体介绍"></a>1. 总体介绍</h4><p>AMQP：高级消息队列协议，是一个工作于应用层的协议，最新的版本是 1.0 版本。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504112049487.png" alt="image-20200504112049487"></p>
+<p>除了 RabbitMQ 之外，AMQP 的实现还有 OpenAMQ、Apache Qpid、Redhat Enterprise MRG、AMQP Infrastructure、ØMQ、Zyre。</p>
+<p>可以使用 WireShark 等工具对 RabbitMQ 通信的 AMQP 协议进行抓包。</p>
+<h4 id="2-工作模型"><a href="#2-工作模型" class="headerlink" title="2. 工作模型"></a>2. 工作模型</h4><p>由于 RabbitMQ 实现了 AMQP 协议，所以 RabbitMQ 的工作模型也是基于 AMQP 的。理解这张图片至关重要。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504112324664.png" alt="image-20200504112324664"></p>
+<h5 id="1-Broker"><a href="#1-Broker" class="headerlink" title="1.Broker"></a>1.Broker</h5><p>我们要使用 RabbitMQ 来收发消息，必须要安装一个 RabbitMQ 的服务，可以安装 在 Windows 上面也可以安装在 Linux 上面，默认是 5672 的端口。这台 RabbitMQ 的 服务器我们把它叫做 Broker，中文翻译是代理/中介，因为 MQ 服务器帮助我们做的事 情就是存储、转发消息。</p>
+<h5 id="2-Connection"><a href="#2-Connection" class="headerlink" title="2. Connection"></a>2. Connection</h5><p>无论是生产者发送消息，还是消费者接收消息，都必须要跟 Broker 之间建立一个连接，这个连接是一个 TCP 的长连接。</p>
+<h5 id="3-Channel"><a href="#3-Channel" class="headerlink" title="3. Channel"></a>3. Channel</h5><p>如果所有的生产者发送消息和消费者接收消息，都直接创建和释放 TCP 长连接的话， 对于 Broker 来说肯定会造成很大的性能损耗，因为 TCP 连接是非常宝贵的资源，创建和释放也要消耗时间。</p>
+<p>所以在 AMQP 里面引入了 Channel 的概念，它是一个虚拟的连接。我们把它翻译成通道，或者消息信道。这样我们就可以在保持的 TCP 长连接里面去创建和释放 Channel，大大了减少了资源消耗。另外一个需要注意的是，Channel 是 RabbitMQ 原生 API 里面的最重要的编程接口，也就是说我们定义交换机、队列、绑定关系，发送消息，消费消息，调用的都是 Channel 接口上的方法。</p>
+<h5 id="4-Queue"><a href="#4-Queue" class="headerlink" title="4. Queue"></a>4. Queue</h5><p>现在我们已经连到 Broker 了，可以收发消息了。在其他一些 MQ 里面，比如 ActiveMQ 和 Kafka，我们的消息都是发送到队列上的。</p>
+<p>队列是真正用来存储消息的，是一个独立运行的进程，有自己的数据库（Mnesia）。</p>
+<p>消费者获取消息有两种模式，一种是 Push 模式，只要生产者发到服务器，就马上推 送给消费者。另一种是 Pull 模式，消息存放在服务端，只有消费者主动获取才能拿到消息。消费者需要写一个 while 循环不断地从队列获取消息吗？不需要，我们可以基于事件机制，实现消费者对队列的监听。</p>
+<p>由于队列有 FIFO 的特性，只有确定前一条消息被消费者接收之后，才会把这条消息 从数据库删除，继续投递下一条消息。</p>
+<h5 id="5-Exchange"><a href="#5-Exchange" class="headerlink" title="5. Exchange"></a>5. Exchange</h5><p>在 RabbitMQ 里面永远不会出现消息直接发送到队列的情况。因为在 AMQP 里面 引入了交换机（Exchange）的概念，用来实现消息的灵活路由。 </p>
+<p>交换机是一个绑定列表，用来查找匹配的绑定关系。 </p>
+<p>队列使用绑定键（Binding Key）跟交换机建立绑定关系。 </p>
+<p>生产者发送的消息需要携带路由键（Routing Key），交换机收到消息时会根据它保存的绑定列表，决定将消息路由到哪些与它绑定的队列上。 </p>
+<p>注意：交换机与队列、队列与消费者都是多对多的关系。</p>
+<h4 id="5-Vhost"><a href="#5-Vhost" class="headerlink" title="5. Vhost"></a>5. Vhost</h4><p>我们每个需要实现基于 RabbitMQ 的异步通信的系统，都需要在服务器上创建自己 要用到的交换机、队列和它们的绑定关系。如果某个业务系统不想跟别人混用一个系统， 怎么办？再采购一台硬件服务器单独安装一个 RabbitMQ 服务？这种方式成本太高了。 在同一个硬件服务器上安装多个 RabbitMQ 的服务呢？比如再运行一个 5673 的端口？ 没有必要，因为 RabbitMQ 提供了虚拟主机 VHOST。 </p>
+<p>VHOST 除了可以提高硬件资源的利用率之外，还可以实现资源的隔离和权限的控制。它的作用类似于编程语言中的 namespace 和 package，不同的 VHOST 中可以有同名的 Exchange 和 Queue，它们是完全透明的。</p>
+<p>这个时候，我们可以为不同的业务系统创建不同的用户（User），然后给这些用户分配 VHOST 的权限。比如给风控系统的用户分配风控系统的 VHOST 的权限，这个用户可以访问里面的交换机和队列。给超级管理员分配所有 VHOST 的权限。 </p>
+<p>我们说到 RabbitMQ 引入 Exchange 是为了实现消息的灵活路由，到底有哪些路由方式？</p>
+<h4 id="3-路由方式"><a href="#3-路由方式" class="headerlink" title="3.  路由方式"></a>3.  路由方式</h4><h5 id="1-直连-Direct"><a href="#1-直连-Direct" class="headerlink" title="1. 直连 Direct"></a>1. 直连 Direct</h5><p>队列与直连类型的交换机绑定，需指定一个精确的绑定键。 </p>
+<p>生产者发送消息时会携带一个路由键。只有当路由键与其中的某个绑定键完全匹配时，这条消息才会从交换机路由到满足路由关系的此队列上。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504122246968.png" alt="image-20200504122246968"></p>
+<p>例 如 ： channel.basicPublish(“MY_DIRECT_EXCHANGE”,”spring”,”msg 1”); 只有第一个队列能收到消息。</p>
+<h5 id="2-主题-Topic"><a href="#2-主题-Topic" class="headerlink" title="2. 主题 Topic"></a>2. 主题 Topic</h5><p>队列与主题类型的交换机绑定时，可以在绑定键中使用通配符。两个通配符： </p>
+<p># 0 个或者多个单词 </p>
+<p>* 不多不少一个单词 </p>
+<p>单词（word）指的是用英文的点“.”隔开的字符。例如 abc.def 是两个单词。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504122513914.png" alt="image-20200504122513914"></p>
+<p><strong>解读：</strong></p>
+<p>第一个队列支持路由键以 junior 开头的消息路由，后面可以有单词，也可以没有。</p>
+<p>第二个队列支持路由键以 netty 开头，并且后面是一个单词的消息路由。</p>
+<p>第三个队列支持路由键以 jvm 结尾，并且前面是一个单词的消息路由。</p>
+<p><strong>例如：</strong> </p>
+<p>channel.basicPublish(“MY_TOPIC_EXCHANGE”,”junior.fjd.klj”,”msg 2”); 只有 第一个队列能收到消息。 </p>
+<p>channel.basicPublish(“MY_TOPIC_EXCHANGE”,”junior.jvm”, “msg 3”); 第 一 个队列和第三个队列能收到消息。</p>
+<h5 id="3-广播-Fanout"><a href="#3-广播-Fanout" class="headerlink" title="3. 广播 Fanout"></a>3. 广播 Fanout</h5><p>主题类型的交换机与队列绑定时，不需要指定绑定键。因此生产者发送消息到广播 类型的交换机上，也不需要携带路由键。消息达到交换机时，所有与之绑定了的队列， 都会收到相同的消息的副本。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504122710799.png" alt="image-20200504122710799"></p>
+<p><strong>例如：</strong> </p>
+<p>channel.basicPublish(“MY_FANOUT_EXCHANGE”, “”, “msg 4”); </p>
+<p>三个队列都会 收到 msg 4。</p>
+<h2 id="3-基本使用"><a href="#3-基本使用" class="headerlink" title="3. 基本使用"></a>3. 基本使用</h2><h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><p>由于 RabbitMQ 是用 Erlang 语言编写的，必须要先安装 Erlang。 </p>
+<p>Windows 安装步骤见预习资料。 </p>
+<p>安装成功以后，会提供默认的 VHost、Exchange。</p>
+<h4 id="2-Java-API-编程"><a href="#2-Java-API-编程" class="headerlink" title="2. Java API 编程"></a>2. Java API 编程</h4><h5 id="1-引入依赖"><a href="#1-引入依赖" class="headerlink" title="1. 引入依赖"></a>1. 引入依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.rabbitmq<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>amqp-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-生产者"><a href="#2-生产者" class="headerlink" title="2. 生产者"></a>2. 生产者</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.rabbitmq.client.Channel;</span><br><span class="line"><span class="keyword">import</span> com.rabbitmq.client.Connection;</span><br><span class="line"><span class="keyword">import</span> com.rabbitmq.client.ConnectionFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProducer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String EXCHANGE_NAME = <span class="string">"SIMPLE_EXCHANGE"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">        <span class="comment">// 连接 IP</span></span><br><span class="line">        factory.setHost(<span class="string">"127.0.0.1"</span>);</span><br><span class="line">        <span class="comment">// 连接端口</span></span><br><span class="line">        factory.setPort(<span class="number">5672</span>);</span><br><span class="line">        <span class="comment">// 虚拟机</span></span><br><span class="line">        factory.setVirtualHost(<span class="string">"/"</span>);</span><br><span class="line">        <span class="comment">// 用户</span></span><br><span class="line">        factory.setUsername(<span class="string">"guest"</span>);</span><br><span class="line">        factory.setPassword(<span class="string">"guest"</span>);</span><br><span class="line">        <span class="comment">// 建立连接</span></span><br><span class="line">        Connection conn = factory.newConnection();</span><br><span class="line">        <span class="comment">// 创建消息通道</span></span><br><span class="line">        Channel channel = conn.createChannel();</span><br><span class="line">        <span class="comment">// 发送消息</span></span><br><span class="line">        String msg = <span class="string">"Hello world, Rabbit MQ"</span>;</span><br><span class="line">        <span class="comment">// String exchange, String routingKey, BasicProperties props, byte[] body</span></span><br><span class="line">        channel.basicPublish(EXCHANGE_NAME, <span class="string">"gupao.best"</span>, <span class="keyword">null</span>, msg.getBytes());</span><br><span class="line">        channel.close();</span><br><span class="line">        conn.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-消费者"><a href="#3-消费者" class="headerlink" title="3. 消费者"></a>3. 消费者</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.rabbitmq.client.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConsumer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String EXCHANGE_NAME = <span class="string">"SIMPLE_EXCHANGE"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String QUEUE_NAME = <span class="string">"SIMPLE_QUEUE"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">        <span class="comment">// 连接 IP</span></span><br><span class="line">        factory.setHost(<span class="string">"127.0.0.1"</span>);</span><br><span class="line">        <span class="comment">// 默认监听端口</span></span><br><span class="line">        factory.setPort(<span class="number">5672</span>);</span><br><span class="line">        <span class="comment">// 虚拟机</span></span><br><span class="line">        factory.setVirtualHost(<span class="string">"/"</span>);</span><br><span class="line">        <span class="comment">// 设置访问的用户</span></span><br><span class="line">        factory.setUsername(<span class="string">"guest"</span>);</span><br><span class="line">        factory.setPassword(<span class="string">"guest"</span>);</span><br><span class="line">        <span class="comment">// 建立连接</span></span><br><span class="line">        Connection conn = factory.newConnection();</span><br><span class="line">        <span class="comment">// 创建消息通道</span></span><br><span class="line">        Channel channel = conn.createChannel();</span><br><span class="line">        <span class="comment">// 声明交换机</span></span><br><span class="line">        <span class="comment">// String exchange, String type, boolean durable, boolean autoDelete, Map&lt;String, Object&gt; arguments</span></span><br><span class="line">        channel.exchangeDeclare(EXCHANGE_NAME,<span class="string">"direct"</span>,<span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">        <span class="comment">// 声明队列</span></span><br><span class="line">        <span class="comment">// String queue, boolean durable, boolean exclusive, boolean autoDelete, Map&lt;String, Object&gt; arguments</span></span><br><span class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">        System.out.println(<span class="string">" Waiting for message...."</span>);</span><br><span class="line">        <span class="comment">// 绑定队列和交换机</span></span><br><span class="line">        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,<span class="string">"gupao.best"</span>);</span><br><span class="line">        <span class="comment">// 创建消费者</span></span><br><span class="line">        Consumer consumer = <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            String msg = <span class="keyword">new</span> String(body, <span class="string">"UTF-8"</span>);</span><br><span class="line">            System.out.println(<span class="string">"Received message : '"</span> + msg + <span class="string">"'"</span>);</span><br><span class="line">            System.out.println(<span class="string">"consumerTag : "</span> + consumerTag );</span><br><span class="line">            System.out.println(<span class="string">"deliveryTag : "</span> + envelope.getDeliveryTag() );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">// 开始获取消息</span></span><br><span class="line">        <span class="comment">// String queue, boolean autoAck, Consumer callback</span></span><br><span class="line">        channel.basicConsume(QUEUE_NAME, <span class="keyword">true</span>, consumer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当你明白了 RabbitMQ 的 Java 原生 API 编程，可以用它来干什么？ </p>
+<p>（不要离开 Spring 就不知道怎么实现功能了）</p>
+<h5 id="4-参数详解"><a href="#4-参数详解" class="headerlink" title="4. 参数详解"></a>4. 参数详解</h5><ol>
+<li><p>声明交换机的参数 </p>
+<p>String type：交换机的类型，direct, topic, fanout 中的一种。 </p>
+<p>boolean durable：是否持久化，代表交换机在服务器重启后是否还存在。</p>
+</li>
+<li><p>声明队列的参数</p>
+<p>boolean durable：是否持久化，代表队列在服务器重启后是否还存在。 </p>
+<p>boolean exclusive：是否排他性队列。排他性队列只能在声明它的 Connection 中使用（可以在同一个 Connection 的不同的 channel 中使用），连接断开时自动删除。 </p>
+<p>boolean autoDelete：是否自动删除。如果为 true，至少有一个消费者连接到 这个队列，之后所有与这个队列连接的消费者都断开时，队列会自动删除。 </p>
+<p>Map arguments：队列的其他属性，例如：</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504131037265.png" alt="image-20200504131037265"></p>
+</li>
+<li><p>消息属性 BasicProperties</p>
+<p>以下列举了一些主要的参数：</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504132343706.png" alt="image-20200504132343706"></p>
+</li>
+</ol>
+<h4 id="3-UI-管理界面的使用"><a href="#3-UI-管理界面的使用" class="headerlink" title="3. UI 管理界面的使用"></a>3. UI 管理界面的使用</h4><p>RabbitMQ 可以通过命令（RabbitMQ CLI）、HTTP API 管理，也可以通过可视化 的界面去管理，这个网页就是 managment 插件。</p>
+<h5 id="1-启用管理插件"><a href="#1-启用管理插件" class="headerlink" title="1. 启用管理插件"></a>1. 启用管理插件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Windows 启用管理插件</span><br><span class="line">cd C:\Program Files\RabbitMQ Server\rabbitmq_server-3.6.6\sbin</span><br><span class="line">rabbitmq-plugins.bat enable rabbitmq_management</span><br><span class="line"></span><br><span class="line">Linux 启用管理插件</span><br><span class="line">cd /usr/lib/rabbitmq/bin</span><br><span class="line">./rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-管理界面访问端口"><a href="#2-管理界面访问端口" class="headerlink" title="2. 管理界面访问端口"></a>2. 管理界面访问端口</h4><p>默认端口是 15672，默认用户 guest，密码 guest。 </p>
+<p>guest 用户默认只能在本机访问，远程用户需要创建其他的用户。</p>
+<h5 id="3-虚拟机"><a href="#3-虚拟机" class="headerlink" title="3. 虚拟机"></a>3. 虚拟机</h5><p>在 Admin 选项卡中：</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504132610532.png" alt="image-20200504132610532"></p>
+<p>默认的虚拟机是 /，可以创建自定义的虚拟机。</p>
+<h4 id="4-Linux-创建-RabbitMQ-用户，权限"><a href="#4-Linux-创建-RabbitMQ-用户，权限" class="headerlink" title="4. Linux 创建 RabbitMQ 用户，权限"></a>4. Linux 创建 RabbitMQ 用户，权限</h4><p>例如创建用户 admin，密码 admin，授权访问所有的 Vhost</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --add-port=15672/tcp</span><br><span class="line">firewall-cmd --reload</span><br><span class="line">rabbitmqctl add_user admin admin</span><br><span class="line">rabbitmqctl set_user_tags admin administrator</span><br><span class="line">rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-RabbitMQ-进阶知识"><a href="#2-RabbitMQ-进阶知识" class="headerlink" title="2. RabbitMQ 进阶知识"></a>2. RabbitMQ 进阶知识</h2><h3 id="1-TTL-Time-To-Live"><a href="#1-TTL-Time-To-Live" class="headerlink" title="1. TTL(Time To Live)"></a>1. TTL(Time To Live)</h3><h4 id="1-消息的过期时间"><a href="#1-消息的过期时间" class="headerlink" title="1. 消息的过期时间"></a>1. 消息的过期时间</h4><p>有两种设置方式： </p>
+<p>1） 通过队列属性设置消息过期时间 所有队列中的消息超过时间未被消费时，都会过期。 </p>
+<p>代码位置 ：com.gupaoedu.ttl.TtlConfig.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(<span class="string">"ttlQueue"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Queue <span class="title">queue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">    map.put(<span class="string">"x-message-ttl"</span>, <span class="number">11000</span>); <span class="comment">// 队列中的消息未被消费 11 秒后过期</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Queue(<span class="string">"GP_TTL_QUEUE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2) 设置单条消息的过期时间</p>
+<p>在发送消息的时候指定消息属性。 </p>
+<p>代码位置：com.gupaoedu.ttl.TtlSender.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MessageProperties messageProperties = <span class="keyword">new</span> MessageProperties();</span><br><span class="line">messageProperties.setExpiration(<span class="string">"4000"</span>); <span class="comment">// 消息的过期属性，单位 ms</span></span><br><span class="line">Message message = <span class="keyword">new</span> Message(<span class="string">"这条消息 4 秒后过期"</span>.getBytes(), messageProperties);</span><br><span class="line">rabbitTemplate.send(<span class="string">"GP_TTL_EXCHANGE"</span>, <span class="string">"gupao.ttl"</span>, message);</span><br></pre></td></tr></table></figure>
+
+<p>如果同时指定了 Message TTL 和 Queue TTL，则小的那个时间生效。</p>
+<h4 id="2-死信队列"><a href="#2-死信队列" class="headerlink" title="2. 死信队列"></a>2. 死信队列</h4><p>消息在某些情况下会变成死信（Dead Letter）。 </p>
+<p>队列在创建的时候可以指定一个死信交换机 DLX（Dead Letter Exchange）。 </p>
+<p>死信交换机绑定的队列被称为死信队列 DLQ（Dead Letter Queue），DLX 实际上 也是普通的交换机，DLQ 也是普通的队列（例如替补球员也是普通球员）。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504140138950.png" alt="image-20200504140138950"></p>
+<p><strong>什么情况下消息会变成死信？</strong></p>
+<p>1）消息被消费者拒绝并且未设置重回队列：(NACK || Reject ) &amp;&amp; requeue == false </p>
+<p>2）消息过期 </p>
+<p>3）队列达到最大长度，超过了 Max length（消息数）或者 Max length bytes （字节数），最先入队的消息会被发送到 DLX。</p>
+<p><strong>死信队列如何使用？</strong></p>
+<ol>
+<li><p>声明原交换机（GP_ORI_USE_EXCHANGE）、原队列（GP_ORI_USE_QUEUE）相互绑定。 </p>
+<p>队列中的消息 10 秒钟过期，因为没有消费者，会变成死信。指定原队列的死信交换机（GP_DEAD_LETTER_EXCHANGE）。 </p>
+<p>代码位置：com.gupaoedu.dlx.ttl.DlxConfig.java</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(<span class="string">"oriUseExchange"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DirectExchange <span class="title">exchange</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> DirectExchange(<span class="string">"GP_ORI_USE_EXCHANGE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">new</span> HashMap&lt;&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span>(<span class="string">"oriUseQueue"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Queue <span class="title">queue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">    map.put(<span class="string">"x-message-ttl"</span>, <span class="number">10000</span>); <span class="comment">// 10 秒钟后成为死信</span></span><br><span class="line">    map.put(<span class="string">"x-dead-letter-exchange"</span>, <span class="string">"GP_DEAD_LETTER_EXCHANGE"</span>); <span class="comment">// 队列中的消息变成死信后，进入死信交换机</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Queue(<span class="string">"GP_ORI_USE_QUEUE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, map);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Binding <span class="title">binding</span><span class="params">(@Qualifier(<span class="string">"oriUseQueue"</span>)</span> Queue queue,@<span class="title">Qualifier</span><span class="params">(<span class="string">"oriUseExchange"</span>)</span> DirectExchange</span></span><br><span class="line"><span class="function">exchange) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> BindingBuilder.bind(queue).to(exchange).with(<span class="string">"gupao.ori.use"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>声 明 死 信 交 换 机 （ GP_DEAD_LETTER_EXCHANGE ） 、 死 信 队 列 （GP_DEAD_LETTER_QUEUE），相互绑定</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(<span class="string">"deatLetterExchange"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> TopicExchange <span class="title">deadLetterExchange</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> TopicExchange(<span class="string">"GP_DEAD_LETTER_EXCHANGE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">new</span> HashMap&lt;&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span>(<span class="string">"deatLetterQueue"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Queue <span class="title">deadLetterQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> Queue(<span class="string">"GP_DEAD_LETTER_QUEUE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">new</span> HashMap&lt;&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Binding <span class="title">bindingDead</span><span class="params">(@Qualifier(<span class="string">"deatLetterQueue"</span>)</span> Queue queue,@<span class="title">Qualifier</span><span class="params">(<span class="string">"deatLetterExchange"</span>)</span></span></span><br><span class="line"><span class="function">    TopicExchange exchange) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> BindingBuilder.bind(queue).to(exchange).with(<span class="string">"#"</span>); <span class="comment">// 无条件路由</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>最终消费者监听死信队列。</li>
+<li>生产者发送消息。</li>
+</ol>
+<h4 id="消息流转图"><a href="#消息流转图" class="headerlink" title="消息流转图"></a>消息流转图</h4><p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504140608495.png" alt="image-20200504140608495"></p>
+<h3 id="3-延迟队列"><a href="#3-延迟队列" class="headerlink" title="3. 延迟队列"></a>3. 延迟队列</h3><p>我们在实际业务中有一些需要延时发送消息的场景，例如： </p>
+<ol>
+<li>家里有一台智能热水器，需要在 30 分钟后启动 </li>
+<li>未付款的订单，15 分钟后关闭 RabbitMQ 本身不支持延迟队列</li>
+</ol>
+<p>总的来说有三种实现方案： </p>
+<ol>
+<li>先存储到数据库，用定时任务扫描</li>
+<li>利用 RabbitMQ 的死信队列（Dead Letter Queue）实现</li>
+<li>利用 rabbitmq-delayed-message-exchange 插件</li>
+</ol>
+<h4 id="1-TTL-DLX-的实现"><a href="#1-TTL-DLX-的实现" class="headerlink" title="1. TTL+DLX 的实现"></a>1. TTL+DLX 的实现</h4><p>基于消息 TTL，我们来看一下如何利用死信队列（DLQ）实现延迟队列： </p>
+<p>总体步骤： </p>
+<p>​    1）创建一个交换机 </p>
+<p>​    2）创建一个队列，与上述交换机绑定，并且通过属性指定队列的死信交换机。 </p>
+<p>​    3）创建一个死信交换机 </p>
+<p>​    4）创建一个死信队列 </p>
+<p>​    5）将死信交换机绑定到死信队列 </p>
+<p>​    6）消费者监听死信队列 </p>
+<p>消息的流转流程： 生产者——原交换机——原队列（超过 TTL 之后）——死信交换机——死信队列— —最终消费者</p>
+<p>使用死信队列实现延时消息的缺点：</p>
+<p>​    1） 如果统一用队列来设置消息的 TTL，当梯度非常多的情况下，比如 1 分钟，2 分钟，5 分钟，10 分钟，20 分钟，30 分钟……需要创建很多交换机和队列来路由消息。 </p>
+<p>​    2） 如果单独设置消息的 TTL，则可能会造成队列中的消息阻塞——前一条消息没有出队（没有被消费），后面的消息无法投递（比如第一条消息过期 TTL 是 30min，第二条消息 TTL 是 10min。10 分钟后，即使第二条消息应该投递了，但是由于第一条消息还未出队，所以无法投递）。 </p>
+<p>​    3） 可能存在一定的时间误差。</p>
+<h4 id="2-基于延迟队列插件的实现（Linux）"><a href="#2-基于延迟队列插件的实现（Linux）" class="headerlink" title="2. 基于延迟队列插件的实现（Linux）"></a>2. 基于延迟队列插件的实现（Linux）</h4><p>在 RabbitMQ 3.5.7 及 以 后 的 版 本 提 供 了 一 个 插 件 （rabbitmq-delayed-message-exchange）来实现延时队列功能。同时插件依赖 Erlang/OPT 18.0 及以上。 </p>
+<p>插件源码地址： <a href="https://github.com/rabbitmq/rabbitmq-delayed-message-exchange" target="_blank" rel="noopener">https://github.com/rabbitmq/rabbitmq-delayed-message-exchange</a> </p>
+<p>插件下载地址： <a href="https://bintray.com/rabbitmq/community-plugins/rabbitmq_delayed_messa" target="_blank" rel="noopener">https://bintray.com/rabbitmq/community-plugins/rabbitmq_delayed_messa</a> </p>
+<p>ge_exchange </p>
+<p><strong>1、进入插件目录</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">whereis rabbitmq</span><br><span class="line">cd /usr/lib/rabbitmq/lib/rabbitmq_server-3.6.12/plugins</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、下载插件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget</span><br><span class="line">https://bintray.com/rabbitmq/community-plugins/download_file?file_path=rabbitmq_delayed_message_exchange-0.0.1.e</span><br></pre></td></tr></table></figure>
+
+<p>如果下载的文件名带问号则需要改名，如图：</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504144047491.png" alt="image-20200504144047491"></p>
+<p>3、启用插件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_delayed_message_exchange</span><br></pre></td></tr></table></figure>
+
+<p>4、停用插件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins disable rabbitmq_delayed_message_exchange</span><br></pre></td></tr></table></figure>
+
+<p>5、插件使用</p>
+<p>通过声明一个 x-delayed-message 类型的 Exchange 来使用 delayed-messaging 特性。x-delayed-message 是插件提供的类型，并不是 rabbitmq 本身的（区别于 direct、 topic、fanout、headers）。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504144115258.png" alt="image-20200504144115258"></p>
+<p>代码位置：com.gupaoedu.dlx.delayplugin.DelayPluginConfig.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(<span class="string">"delayExchange"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> TopicExchange <span class="title">exchange</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; argss = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">    argss.put(<span class="string">"x-delayed-type"</span>, <span class="string">"direct"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TopicExchange(<span class="string">"GP_DELAY_EXCHANGE"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, argss);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>生产者：</strong> </p>
+<p>消息属性中指定 x-delay 参数。 </p>
+<p>代码位置：com.gupaoedu.dlx.delayplugin.DelayPluginProducer.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MessageProperties messageProperties = <span class="keyword">new</span> MessageProperties();</span><br><span class="line"><span class="comment">// 延迟的间隔时间，目标时刻减去当前时刻</span></span><br><span class="line">messageProperties.setHeader(<span class="string">"x-delay"</span>, delayTime.getTime() - now.getTime());</span><br><span class="line">Message message = <span class="keyword">new</span> Message(msg.getBytes(), messageProperties);</span><br><span class="line"><span class="comment">// 不能在本地测试，必须发送消息到安装了插件的 Linux 服务端</span></span><br><span class="line">rabbitTemplate.send(<span class="string">"GP_DELAY_EXCHANGE"</span>, <span class="string">"#"</span>,</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-服务端流控（Flow-Control）"><a href="#4-服务端流控（Flow-Control）" class="headerlink" title="4. 服务端流控（Flow Control）"></a>4. 服务端流控（Flow Control）</h2><p>当 RabbitMQ 生产 MQ 消息的速度远大于消费消息的速度时，会产生大量的消息堆积，占用系统资源，导致机器的性能下降。我们想要控制服务端接收的消息的数量，应 该怎么做呢？ </p>
+<p>队列有两个控制长度的属性：</p>
+<p>x-max-length：队列中最大存储最大消息数，超过这个数量，队头的消息会被丢 弃。</p>
+<p>x-max-length-bytes：队列中存储的最大消息容量（单位 bytes），超过这个容 量，队头的消息会被丢弃。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200504143807241.png" alt="image-20200504143807241"></p>
+<p>需要注意的是，设置队列长度只在消息堆积的情况下有意义，而且会删除先入队的 消息，不能真正地实现服务端限流。 </p>
+<p>有没有其他办法实现服务端限流呢？</p>
+<h3 id="1-内存控制"><a href="#1-内存控制" class="headerlink" title="1. 内存控制"></a>1. 内存控制</h3><p>RabbitMQ 会在启动时检测机器的物理内存数值。默认当 MQ 占用 40% 以上内 存时，MQ 会主动抛出一个内存警告并阻塞所有连接（Connections）。可以通过修改 rabbitmq.config 文件来调整内存阈值，默认值是 0.4，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#123;rabbit, [&#123;vm_memory_high_watermark, 0.4&#125;]&#125;].</span><br></pre></td></tr></table></figure>
+
+<p>也可以用命令动态设置，如果设置成 0，则所有的消息都不能发布。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl set_vm_memory_high_watermark 0.3</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-磁盘控制"><a href="#2-磁盘控制" class="headerlink" title="2. 磁盘控制"></a>2. 磁盘控制</h3><p>另一种方式是通过磁盘来控制消息的发布。当磁盘空间低于指定的值时（默认 50MB），触发流控措施。 </p>
+<p>例如：指定为磁盘的 30%或者 2GB： <a href="https://www.rabbitmq.com/configure.html" target="_blank" rel="noopener">https://www.rabbitmq.com/configure.html</a> </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">disk_free_limit.relative = 3.0 </span><br><span class="line">disk_free_limit.absolute = 2GB</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-消费端限流"><a href="#3-消费端限流" class="headerlink" title="3. 消费端限流"></a>3. 消费端限流</h3><p><a href="https://www.rabbitmq.com/consumer-prefetch.html" target="_blank" rel="noopener">https://www.rabbitmq.com/consumer-prefetch.html</a> </p>
+<p>默认情况下，如果不进行配置，RabbitMQ 会尽可能快速地把队列中的消息发送到 消费者。因为消费者会在本地缓存消息，如果消息数量过多，可能会导致 OOM 或者影 响其他进程的正常运行。 </p>
+<p>在消费者处理消息的能力有限，例如消费者数量太少，或者单条消息的处理时间过 长的情况下，如果我们希望在一定数量的消息消费完之前，不再推送消息过来，就要用到消费端的流量限制措施。 </p>
+<p>可以基于 Consumer 或者 channel 设置 prefetch count 的值，含义为 Consumer 端的最大的 unacked messages 数目。当超过这个数值的消息未被确认，RabbitMQ 会停止投递新的消息给该消费者。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">channel.basicQos(2); // 如果超过 2 条消息没有发送 ACK，当前消费者不再接受队列消息</span><br><span class="line">channel.basicConsume(QUEUE_NAME, false, consumer);</span><br></pre></td></tr></table></figure>
+
+<p>SimpleMessageListenerContainer:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">container.setPrefetchCount(2);</span><br></pre></td></tr></table></figure>
+
+<p>Spring Boot 配置：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">spring.rabbitmq.listener.simple.prefetch=2</span></span><br></pre></td></tr></table></figure>
+
+<p>举例： channel 的 prefetch count 设置为 5。当消费者有 5 条消息没有给 Broker 发送 ACK 后，RabbitMQ 不再给这个消费者投递消息。 </p>
+<p>参考：com.gupaoedu.limit com.gupaoedu.amqp.container.ContainerConfig</p>
+<h2 id="5-Spring-AMQP"><a href="#5-Spring-AMQP" class="headerlink" title="5. Spring AMQP"></a>5. Spring AMQP</h2><p> <a href="https://www.docs4dev.com/docs/zh/spring-amqp/2.1.2.RELEASE/reference/_reference.html" target="_blank" rel="noopener">https://www.docs4dev.com/docs/zh/spring-amqp/2.1.2.RELEASE/reference/_reference.html</a></p>
+<h3 id="1-Spring-AMQP-介绍"><a href="#1-Spring-AMQP-介绍" class="headerlink" title="1. Spring AMQP 介绍"></a>1. Spring AMQP 介绍</h3><p>思考：</p>
+<p>Java API 方式编程，有什么问题？ </p>
+<p>Spring 封装 RabbitMQ 的时候，它做了什么事情？ </p>
+<ol>
+<li><p>管理对象（队列、交换机、绑定） </p>
+</li>
+<li><p>封装方法（发送消息、接收消息）</p>
+</li>
+</ol>
+<p>Spring AMQP 是对 Spring 基于 AMQP 的消息收发解决方案，它是一个抽象层， 不依赖于特定的 AMQP Broker 实现和客户端的抽象，所以可以很方便地替换。比如我们可以使用 spring-rabbit 来实现。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.amqp<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.5.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>包括 3 个 jar 包： </p>
+<ol>
+<li>Amqp-client-3.3.4.jar </li>
+<li>Spring-amqp.jar </li>
+<li>Spring.rabbit.jar</li>
+</ol>
+<h3 id="2-Spring-AMQP-核心组件"><a href="#2-Spring-AMQP-核心组件" class="headerlink" title="2. Spring AMQP 核心组件"></a>2. Spring AMQP 核心组件</h3><h4 id="1-ConnectionFactory"><a href="#1-ConnectionFactory" class="headerlink" title="1. ConnectionFactory"></a>1. ConnectionFactory</h4><p>Spring AMQP 的连接工厂接口，用于创建连接。CachingConnectionFactory 是ConnectionFactory 的一个实现类。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/27/RabbitMQ/">http://lidashuang.com/2020/04/27/RabbitMQ/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/28/%E7%A0%B8%E8%9B%8B%E6%B8%B8%E6%88%8F%E6%A8%A1%E6%9D%BF/">砸蛋游戏模板</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/27/%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/">限流算法</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

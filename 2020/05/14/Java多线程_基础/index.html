@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Java多线程_基础 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Java多线程_基础</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">五月 14, 2020&nbsp;&nbsp;19:13:40</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Java-多线程-基础"><a href="#Java-多线程-基础" class="headerlink" title="Java 多线程 - 基础"></a>Java 多线程 - 基础</h1><blockquote>
+<p><strong>摩尔定律</strong>（英語：Moore’s law）是由<a href="https://zh.wikipedia.org/wiki/英特尔" target="_blank" rel="noopener">英特尔</a>（Intel）创始人之一<a href="https://zh.wikipedia.org/wiki/戈登·摩尔" target="_blank" rel="noopener">戈登·摩尔</a>提出的。其内容为：<a href="https://zh.wikipedia.org/wiki/集成电路" target="_blank" rel="noopener">集成电路</a>上可容纳的<a href="https://zh.wikipedia.org/wiki/晶体管" target="_blank" rel="noopener">晶体管</a>数目，约每隔兩年便会增加一倍；经常被引用的“18个月”，是由英特尔<a href="https://zh.wikipedia.org/wiki/首席执行官" target="_blank" rel="noopener">首席执行官</a><a href="https://zh.wikipedia.org/w/index.php?title=大衛·豪斯&action=edit&redlink=1" target="_blank" rel="noopener">大衛·豪斯</a>（David House）提出：预计18个月会将芯片的性能提高一倍（即更多的晶体管使其更快），是一種以<a href="https://zh.wikipedia.org/wiki/倍數增長" target="_blank" rel="noopener">倍數增長</a>的觀測。<a href="https://zh.wikipedia.org/wiki/摩尔定律#cite_note-1" target="_blank" rel="noopener">[1]</a></p>
+<p>半导体行业大致按照摩尔定律发展了半个多世纪，对二十世纪后半叶的世界经济增长做出了贡献，并驱动了一系列科技创新、社会改革、生产效率的提高和经济增长。<a href="https://zh.wikipedia.org/wiki/个人电脑" target="_blank" rel="noopener">个人电脑</a>、<a href="https://zh.wikipedia.org/wiki/因特网" target="_blank" rel="noopener">因特网</a>、<a href="https://zh.wikipedia.org/wiki/智能手机" target="_blank" rel="noopener">智能手机</a>等技术改善和创新都离不开摩尔定律的延续<a href="https://zh.wikipedia.org/wiki/摩尔定律#cite_note-2" target="_blank" rel="noopener">[2]</a>。</p>
+<p>尽管摩尔定律的现象已经被观察到了数十年，摩尔定律仍应该被视为是对现象的观测或对未来的推测，而不是一个物理定律或自然界的规律，从另一角度看，未来的增长率在逻辑上无法保证会跟过去的数据一样，也就是逻辑上无法保证摩尔定律会持续下去。虽然预计摩尔定律将持续到至少2020年。<a href="https://zh.wikipedia.org/wiki/摩尔定律#cite_note-3" target="_blank" rel="noopener">[3]</a>然而，2010年<a href="https://zh.wikipedia.org/wiki/国际半导体技术发展蓝图" target="_blank" rel="noopener">国际半导体技术发展路线图</a>的更新增长已经在2013年年底放缓<a href="https://zh.wikipedia.org/wiki/摩尔定律#cite_note-4" target="_blank" rel="noopener">[4]</a>；又比如说英特尔在22奈米跟14奈米的CPU製程上已经放慢了技术更新的脚步，之后的时间里，晶体管数量密度预计只会每三年增加一倍。<a href="https://zh.wikipedia.org/wiki/Wikipedia:列明来源" target="_blank" rel="noopener">[來源請求]</a></p>
+<p>– 维基百科</p>
+</blockquote>
+<h2 id="1-并发的发展历史"><a href="#1-并发的发展历史" class="headerlink" title="1. 并发的发展历史"></a>1. 并发的发展历史</h2><h3 id="1-真空管和穿孔打卡"><a href="#1-真空管和穿孔打卡" class="headerlink" title="1. 真空管和穿孔打卡"></a>1. 真空管和穿孔打卡</h3><p>最早的计算机只能解决简单的数学运算问题，比如正弦、 余弦等。运行方式：程序员首先把程序写到纸上，然后穿 孔成卡片，再把卡片盒带入到专门的输入室。输入室会有 专门的操作员将卡片的程序输入到计算机上。计算机运行 完当前的任务以后，把计算结果从打印机上进行输出，操 作员再把打印出来的结果送入到输出室，程序员就可以从 输出室取到结果。然后，操作员再继续从已经送入到输入 室的卡片盒中读入另一个任务重复上述的步骤。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200514211843283.png" alt="image-20200514211843283"></p>
+<p><strong>操作员在机房里面来回调度资源，以及计算机同一个时刻 只能运行一个程序，在程序输入的过程中，计算机计算机 和处理空闲状态 。而当时的计算机是非常昂贵的，人们为了减少这种资源的浪费。就采用了 批处理系统来解决。</strong></p>
+<h3 id="2-晶体管和批处理系统"><a href="#2-晶体管和批处理系统" class="headerlink" title="2. 晶体管和批处理系统"></a>2. 晶体管和批处理系统</h3><p>批处理操作系统的运行方式：在输入室收集全部的作业， 然后用一台比较便宜的计算机把它们读取到磁带上。然后 把磁带输入到计算机，计算机通过读取磁带的指令来进行 运算，最后把结果输出磁带上。批处理操作系统的好处在 于，计算机会一直处于运算状态，合理的利用了计算机资 源。（运行流程如下图所示）</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200514211449870.png" alt="image-20200514211449870"></p>
+<p>a: 程序员把卡片拿到 1401 机 b: 1401 机把批处理作业读到磁带上 c: 操作员把输入磁带送到熬 7094 机 d: 7094 机进行计算 e: 操作员把输出磁带送到 1401 机 f:1401 机打印输出</p>
+<p><strong>批处理操作系统虽然能够解决计算机的空闲问题，但是当某一个作业因为等待磁盘或者其他 I/O 操作而暂停时，那 CPU 就只能阻塞直到该 I/O 完成，对于 CPU 操作密集型 的程序，I/O 操作相对较少，因此浪费的时间也很少。但是 对于 I/O 操作较多的场景来说，CPU 的资源是属于严重浪 费的。</strong></p>
+<h3 id="3-集成电路和多道程序设计"><a href="#3-集成电路和多道程序设计" class="headerlink" title="3. 集成电路和多道程序设计"></a>3. 集成电路和多道程序设计</h3><p>多道程序设计的出现解决了这个问题，就是把内存分为几 个部分，每一个部分放不同的程序。当一个程序需要等待 I/O 操作完成时。那么 CPU 可以切换执行内存中的另外一 个程序。如果内存中可以同时存放足够多的程序，那 CPU 的利用率可以接近 100%。</p>
+<p>在这个时候，引入了第一个概念- 进程, 进程的本质是一个 正在执行的程序，程序运行时系统会创建一个进程，并且 给每个进程分配独立的内存地址空间保证每个进程地址不 会相互干扰。同时，在 CPU 对进程做时间片的切换时，保 证进程切换过程中仍然要从进程切换之前运行的位置出开 始执行。所以进程通常还会包括程序计数器、堆栈指针。</p>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200514211542850.png" alt="image-20200514211542850"></p>
+<p><strong>有了进程以后，可以让操作系统从宏观层面实现多应用并发。而并发的实现是通过 CPU 时间片不端切换执行的。对于单核 CPU 来说，在任意一个时刻只会有一个进程在被 CPU 调度。</strong></p>
+<h3 id="3-线程的出现"><a href="#3-线程的出现" class="headerlink" title="3. 线程的出现"></a>3. 线程的出现</h3><p><strong>有了进程以后，为什么还会发明线程呢？</strong></p>
+<ol>
+<li>在多核 CPU 中，利用多线程可以实现真正意义上的并行 执行</li>
+<li>在一个应用进程中，会存在多个同时执行的任务，如果 其中一个任务被阻塞，将会引起不依赖该任务的任务也 被阻塞。通过对不同任务创建不同的线程去处理，可以 提升程序处理的实时性 </li>
+<li>线程可以认为是轻量级的进程，所以线程的创建、销毁 比进程更快</li>
+</ol>
+<h2 id="线程的应用"><a href="#线程的应用" class="headerlink" title="线程的应用"></a>线程的应用</h2><h3 id="1-如何应用"><a href="#1-如何应用" class="headerlink" title="1. 如何应用"></a>1. 如何应用</h3><p>多线程 在 Java 中，有多种方式来实现多线程。继承 Thread 类、 实现 Runnable 接口、使用 ExecutorService、Callable、 Future 实现带返回结果的多线程。</p>
+<h4 id="继承-Thread-类创建线程"><a href="#继承-Thread-类创建线程" class="headerlink" title="继承 Thread 类创建线程"></a>继承 Thread 类创建线程</h4><p>Thread 类本质上是实现了 Runnable 接口的一个实例，代 表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它会 启动一个新线程，并执行 run()方法。这种方式实现多线程 很简单，通过自己的类直接 extend Thread，并复写 run() 方法，就可以启动新线程并执行自己定义的 run()方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    MyThread myThread1 = <span class="keyword">new</span> MyThread();</span><br><span class="line">    MyThread myThread2 = <span class="keyword">new</span> MyThread();</span><br><span class="line">    myThread1.start();</span><br><span class="line">    myThread2.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="实现-Runnable-接口创建线程"><a href="#实现-Runnable-接口创建线程" class="headerlink" title="实现 Runnable 接口创建线程"></a>实现 Runnable 接口创建线程</h4><p>如果自己的类已经 extends 另一个类，就无法直接 extends Thread，此时，可以实现一个 Runnable 接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 通过实现接口 Runnable 实现线程的创建 */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread2</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    MyThread2 m_2_1 = <span class="keyword">new</span> MyThread2();</span><br><span class="line">    MyThread2 m_2_2 = <span class="keyword">new</span> MyThread2();</span><br><span class="line">    <span class="keyword">new</span> Thread(m_2_1).start();</span><br><span class="line">    <span class="keyword">new</span> Thread(m_2_2).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现-Callable-接口通过-FutureTask-包装器来创建-Thread-线程"><a href="#实现-Callable-接口通过-FutureTask-包装器来创建-Thread-线程" class="headerlink" title="实现 Callable 接口通过 FutureTask 包装器来创建 Thread 线程"></a>实现 Callable 接口通过 FutureTask 包装器来创建 Thread 线程</h4><p>有的时候，我们可能需要让一步执行的线程在执行完成以 后，提供一个返回值给到当前的主线程，主线程需要依赖 这个值进行后续的逻辑处理，那么这个时候，就需要用到 带返回值的线程了。Java 中提供了这样的实现方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread3</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> b=<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">return</span> String.valueOf(a + b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line">    ExecutorService executorService = Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">    MyThread3 callableDemo = <span class="keyword">new</span> MyThread3();</span><br><span class="line">    System.out.println(<span class="string">"---------"</span>);</span><br><span class="line">    Future&lt;String&gt; future = executorService.submit(callableDemo);</span><br><span class="line">    System.out.println(future.get());</span><br><span class="line">    executorService.shutdown();</span><br><span class="line">    System.out.println(<span class="string">"---------"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="多线程的实际应用场景"><a href="#多线程的实际应用场景" class="headerlink" title="多线程的实际应用场景"></a>多线程的实际应用场景</h2><p>其实大家在工作中应该很少有场景能够应用多线程了，因 为基于业务开发来说，很多使用异步的场景我们都通过分 布式消息队列来做了。但并不是说多线程就不会被用到， 你们如果有看一些框架的源码，会发现线程的使用无处不在，之前我应用得比较多的场景是在做文件跑批，每天会有一些比如收益文件、对账文件，我们会有一个定时任务去拿 到数据然后通过线程去处理 之前看 zookeeper 源码的时候看到一个比较有意思的异步责任链模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Request</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Request&#123;"</span> +</span><br><span class="line">            <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</span><br><span class="line">            <span class="string">'&#125;'</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PrintProcessor</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PrintProcessor</span> <span class="keyword">extends</span> <span class="title">Thread</span> <span class="keyword">implements</span></span></span><br><span class="line"><span class="class"><span class="title">RequestProcessor</span></span>&#123;</span><br><span class="line"> LinkedBlockingQueue&lt;Request&gt; requests = <span class="keyword">new</span></span><br><span class="line">LinkedBlockingQueue&lt;Request&gt;();</span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> RequestProcessor nextProcessor;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">PrintProcessor</span><span class="params">(RequestProcessor nextProcessor)</span> </span>&#123;</span><br><span class="line"> <span class="keyword">this</span>.nextProcessor = nextProcessor;</span><br><span class="line"> &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"> <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line"> <span class="keyword">try</span> &#123;</span><br><span class="line"> Request request=requests.take();</span><br><span class="line"> System.out.println(<span class="string">"print</span></span><br><span class="line"><span class="string">data:"</span>+request.getName());</span><br><span class="line"> nextProcessor.processRequest(request);</span><br><span class="line"> &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"> e.printStackTrace();</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">//处理请求</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line"> requests.add(request);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">                    </span><br><span class="line">                    SaveProcessor</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SaveProcessor</span> <span class="keyword">extends</span> <span class="title">Thread</span> <span class="keyword">implements</span></span></span><br><span class="line"><span class="class"><span class="title">RequestProcessor</span></span>&#123;</span><br><span class="line"> LinkedBlockingQueue&lt;Request&gt; requests = <span class="keyword">new</span></span><br><span class="line">LinkedBlockingQueue&lt;Request&gt;();</span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"> <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line"> <span class="keyword">try</span> &#123;</span><br><span class="line"> Request request=requests.take();</span><br><span class="line"> System.out.println(<span class="string">"begin save request</span></span><br><span class="line"><span class="string">info:"</span>+request);</span><br><span class="line"> &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"> e.printStackTrace();</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">//处理请求</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line"> requests.add(request);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line">Main</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"> PrintProcessor printProcessor;</span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="title">Main</span><span class="params">()</span></span>&#123;</span><br><span class="line"> SaveProcessor saveProcessor=<span class="keyword">new</span> SaveProcessor();</span><br><span class="line"> saveProcessor.start();</span><br><span class="line"> printProcessor=<span class="keyword">new</span> PrintProcessor(saveProcessor);</span><br><span class="line"> printProcessor.start();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doTest</span><span class="params">(Request request)</span></span>&#123;</span><br><span class="line"> printProcessor.processRequest(request);</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"> Request request=<span class="keyword">new</span> Request();</span><br><span class="line">     request.setName(<span class="string">"Mic"</span>);</span><br><span class="line"> <span class="keyword">new</span> Main().doTest(request);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Java-并发编程的基础"><a href="#Java-并发编程的基础" class="headerlink" title="Java 并发编程的基础"></a>Java 并发编程的基础</h2><p>基本应用搞清楚以后，我们再来基于Java线程的基础切入， 来逐步去深入挖掘线程的整体模型。 </p>
+<p>线程的生命周期 </p>
+<p>Java 线程既然能够创建，那么也势必会被销毁，所以线程 是存在生命周期的，那么我们接下来从线程的生命周期开 始去了解线程。 </p>
+<p>线程一共有 6 种状态（NEW、RUNNABLE、BLOCKED、 WAITING、TIME_WAITING、TERMINATED） </p>
+<ul>
+<li><p>NEW：初始状态，线程被构建，但是还没有调用 start 方法 </p>
+</li>
+<li><p>RUNNABLED：运行状态，JAVA 线程把操作系统中的就绪和运行两种状态统一称为“运行中” </p>
+</li>
+<li><p>BLOCKED：阻塞状态，表示线程进入等待状态,也就是线程 因为某种原因放弃了 CPU 使用权，阻塞也分为几种情况 ➢ 等待阻塞：运行的线程执行 wait 方法，jvm 会把当前 线程放入到等待队列</p>
+<ul>
+<li><p>同步阻塞：运行的线程在获取对象的同步锁时，若该同 步锁被其他线程锁占用了，那么 jvm 会把当前的线程 放入到锁池中</p>
+</li>
+<li><p>其他阻塞：运行的线程执行 Thread.sleep 或者 t.join 方 法，或者发出了 I/O 请求时，JVM 会把当前线程设置 为阻塞状态，当 sleep 结束、join 线程终止、io 处理完 毕则线程恢复</p>
+</li>
+</ul>
+</li>
+<li><p>TIME_WAITING：超时等待状态，超时以后自动返回</p>
+</li>
+<li><p>TERMINATED：终止状态，表示当前线程执行完毕</p>
+</li>
+</ul>
+<p><img src="C:%5CUsers%5CLiDaShuang%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200515085032260.png" alt="image-20200515085032260"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/05/14/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B_%E5%9F%BA%E7%A1%80/">http://lidashuang.com/2020/05/14/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B_%E5%9F%BA%E7%A1%80/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/04/28/%E7%A0%B8%E8%9B%8B%E6%B8%B8%E6%88%8F%E6%A8%A1%E6%9D%BF/">砸蛋游戏模板</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

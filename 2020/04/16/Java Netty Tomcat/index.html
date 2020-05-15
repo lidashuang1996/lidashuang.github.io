@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="LiDaShuang">
+
+
+
+
+
+<title>Java Netty Tomcat | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LiDaShuang</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LiDaShuang</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">列表</a>
+                
+                    <a class="menu-item" href="/category">类别</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Java Netty Tomcat</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">LiDaShuang</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 16, 2020&nbsp;&nbsp;16:48:45</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dyy.tomcat.netty;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPRequest;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPResponse;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPServlet;</span><br><span class="line"><span class="keyword">import</span> io.netty.bootstrap.ServerBootstrap;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.*;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.nio.NioEventLoopGroup;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.socket.SocketChannel;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.socket.nio.NioServerSocketChannel;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpRequest;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpRequestDecoder;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpResponseEncoder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.net.URLDecoder;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//Netty就是一个同时支持多协议的网络通信框架</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GPTomcat</span> </span>&#123;</span><br><span class="line">	<span class="comment">//打开Tomcat源码，全局搜索ServerSocket</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> port = <span class="number">8080</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Map&lt;String,GPServlet&gt; servletMapping = <span class="keyword">new</span> HashMap&lt;String,GPServlet&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Properties webxml = <span class="keyword">new</span> Properties();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//加载web.xml文件,同时初始化 ServletMapping对象</span></span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			<span class="comment">// 读取配置文件</span></span><br><span class="line">			String WEB_INF = <span class="keyword">this</span>.getClass().getResource(<span class="string">"/"</span>).getPath();</span><br><span class="line">			String path = URLDecoder.decode(WEB_INF + <span class="string">"web.properties"</span>, <span class="string">"UTF-8"</span>);</span><br><span class="line">			FileInputStream fis = <span class="keyword">new</span> FileInputStream(path);</span><br><span class="line"></span><br><span class="line">			webxml.load(fis);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> (Object k : webxml.keySet()) &#123;</span><br><span class="line"></span><br><span class="line">				String key = k.toString();</span><br><span class="line">				<span class="keyword">if</span>(!key.startsWith(<span class="string">"#"</span>) &amp;&amp; key.endsWith(<span class="string">".url"</span>))&#123;</span><br><span class="line">					String servletName = key.replaceAll(<span class="string">"\\.url$"</span>, <span class="string">""</span>);</span><br><span class="line">					String url = webxml.getProperty(key);</span><br><span class="line">					String className = webxml.getProperty(servletName + <span class="string">".className"</span>);</span><br><span class="line">					GPServlet obj = (GPServlet)Class.forName(className).newInstance();</span><br><span class="line">					servletMapping.put(url, obj);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span></span>&#123;</span><br><span class="line">		init();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Netty封装了NIO，Reactor模型，Boss，worker</span></span><br><span class="line">		<span class="comment">// Boss线程</span></span><br><span class="line">		EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="comment">// Worker线程</span></span><br><span class="line">		EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">// Netty服务</span></span><br><span class="line">			<span class="comment">//ServetBootstrap   ServerSocketChannel</span></span><br><span class="line">			ServerBootstrap server = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">			<span class="comment">// 链路式编程</span></span><br><span class="line">			server.group(bossGroup, workerGroup)</span><br><span class="line">					<span class="comment">// 主线程处理类,看到这样的写法，底层就是用反射</span></span><br><span class="line">					.channel(NioServerSocketChannel<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">					// 子线程处理类 , <span class="title">Handler</span></span></span><br><span class="line"><span class="class">					.<span class="title">childHandler</span>(<span class="title">new</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt;() </span>&#123;</span><br><span class="line">						<span class="comment">// 客户端初始化处理</span></span><br><span class="line">						<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel client)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">							<span class="comment">// 无锁化串行编程</span></span><br><span class="line">							<span class="comment">//Netty对HTTP协议的封装，顺序有要求</span></span><br><span class="line">							<span class="comment">// HttpResponseEncoder 编码器</span></span><br><span class="line">							client.pipeline().addLast(<span class="keyword">new</span> HttpResponseEncoder());</span><br><span class="line">							<span class="comment">// HttpRequestDecoder 解码器</span></span><br><span class="line">							client.pipeline().addLast(<span class="keyword">new</span> HttpRequestDecoder());</span><br><span class="line">							<span class="comment">// 业务逻辑处理</span></span><br><span class="line">							client.pipeline().addLast(<span class="keyword">new</span> GPTomcatHandler());</span><br><span class="line">						&#125;</span><br><span class="line"></span><br><span class="line">					&#125;)</span><br><span class="line">					<span class="comment">// 针对主线程的配置 分配线程最大数量 128</span></span><br><span class="line">					.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">					<span class="comment">// 针对子线程的配置 保持长连接</span></span><br><span class="line">					.childOption(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 启动服务器</span></span><br><span class="line">			ChannelFuture f = server.bind(port).sync();</span><br><span class="line">			System.out.println(<span class="string">"GP Tomcat 已启动，监听的端口是："</span> + port);</span><br><span class="line">			f.channel().closeFuture().sync();</span><br><span class="line">		&#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">// 关闭线程池</span></span><br><span class="line">			bossGroup.shutdownGracefully();</span><br><span class="line">			workerGroup.shutdownGracefully();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GPTomcatHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (msg <span class="keyword">instanceof</span> HttpRequest)&#123;</span><br><span class="line">				HttpRequest req = (HttpRequest) msg;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// 转交给我们自己的request实现</span></span><br><span class="line">				GPRequest request = <span class="keyword">new</span> GPRequest(ctx,req);</span><br><span class="line">				<span class="comment">// 转交给我们自己的response实现</span></span><br><span class="line">				GPResponse response = <span class="keyword">new</span> GPResponse(ctx,req);</span><br><span class="line">				<span class="comment">// 实际业务处理</span></span><br><span class="line">				String url = request.getUrl();</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span>(servletMapping.containsKey(url))&#123;</span><br><span class="line">					servletMapping.get(url).service(request, response);</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					response.write(<span class="string">"404 - Not Found"</span>);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">new</span> GPTomcat().start();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dyy.tomcat.netty.http;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelHandlerContext;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpRequest;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.QueryStringDecoder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GPRequest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> ChannelHandlerContext ctx;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> HttpRequest req;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">GPRequest</span><span class="params">(ChannelHandlerContext ctx, HttpRequest req)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.ctx = ctx;</span><br><span class="line">		<span class="keyword">this</span>.req = req;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getUrl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> req.uri();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> req.method().name();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> Map&lt;String, List&lt;String&gt;&gt; getParameters() &#123;</span><br><span class="line">		QueryStringDecoder decoder = <span class="keyword">new</span> QueryStringDecoder(req.uri());</span><br><span class="line">		<span class="keyword">return</span> decoder.parameters();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getParameter</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		Map&lt;String, List&lt;String&gt;&gt; params = getParameters();</span><br><span class="line">		List&lt;String&gt; param = params.get(name);</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> == param) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> param.get(<span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">package com.dyy.tomcat.netty.http;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.netty.buffer.Unpooled;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelHandlerContext;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.*;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">GPResponse</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//SocketChannel的封装</span></span><br><span class="line">	private ChannelHandlerContext ctx;</span><br><span class="line"></span><br><span class="line">	private HttpRequest req;</span><br><span class="line"></span><br><span class="line">	public GPResponse(ChannelHandlerContext ctx, HttpRequest req) &#123;</span><br><span class="line">		<span class="keyword">this</span>.ctx = ctx;</span><br><span class="line">		<span class="keyword">this</span>.req = req;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">void</span> write(<span class="built_in">String</span> out) throws Exception &#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> (out == <span class="literal">null</span> || out.length() == <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// 设置 http协议及请求头信息</span></span><br><span class="line">			FullHttpResponse response = <span class="keyword">new</span> DefaultFullHttpResponse(</span><br><span class="line">				<span class="comment">// 设置http版本为1.1</span></span><br><span class="line">				HttpVersion.HTTP_1_1,</span><br><span class="line">				<span class="comment">// 设置响应状态码</span></span><br><span class="line">				HttpResponseStatus.OK,</span><br><span class="line">				<span class="comment">// 将输出值写出 编码为UTF-8</span></span><br><span class="line">				Unpooled.wrappedBuffer(out.getBytes(<span class="string">"UTF-8"</span>)));</span><br><span class="line"></span><br><span class="line">			response.headers().set(<span class="string">"Content-Type"</span>, <span class="string">"text/html;"</span>);</span><br><span class="line">			<span class="comment">// 当前是否支持长连接</span></span><br><span class="line"><span class="comment">//            if (HttpUtil.isKeepAlive(r)) &#123;</span></span><br><span class="line"><span class="comment">//                // 设置连接内容为长连接</span></span><br><span class="line"><span class="comment">//                response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);</span></span><br><span class="line"><span class="comment">//            &#125;</span></span><br><span class="line">			ctx.write(response);</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			ctx.flush();</span><br><span class="line">			ctx.close();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dyy.tomcat.netty.http;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">GPServlet</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(GPRequest request,GPResponse response)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//由service方法来决定，是调用doGet或者调用doPost</span></span><br><span class="line">		<span class="keyword">if</span>(<span class="string">"GET"</span>.equalsIgnoreCase(request.getMethod()))&#123;</span><br><span class="line">			doGet(request, response);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			doPost(request, response);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(GPRequest request,GPResponse response)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(GPRequest request,GPResponse response)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dyy.tomcat.netty.servlet;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPRequest;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPResponse;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPServlet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstServlet</span> <span class="keyword">extends</span> <span class="title">GPServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(GPRequest request, GPResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.doPost(request, response);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(GPRequest request, GPResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">		response.write(<span class="string">"This is First Serlvet "</span> + <span class="keyword">new</span> Date().toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dyy.tomcat.netty.servlet;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPRequest;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPResponse;</span><br><span class="line"><span class="keyword">import</span> com.dyy.tomcat.netty.http.GPServlet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecondServlet</span> <span class="keyword">extends</span> <span class="title">GPServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(GPRequest request, GPResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.doPost(request, response);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(GPRequest request, GPResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		response.write(<span class="string">"This is Second Serlvet "</span> + <span class="keyword">new</span> Date().toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>LiDaShuang</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://lidashuang.com/2020/04/16/Java%20Netty%20Tomcat/">http://lidashuang.com/2020/04/16/Java%20Netty%20Tomcat/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/17/RPC%20Netty/">RPC Netty</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/14/Jenkins%20%E5%AD%A6%E4%B9%A0/">Jenkins 学习</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© LiDaShuang | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
